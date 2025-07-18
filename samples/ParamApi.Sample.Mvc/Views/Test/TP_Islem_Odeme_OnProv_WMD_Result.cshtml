@@ -1,0 +1,261 @@
+@model ParamApi.Sample.Mvc.Models.TP_Islem_Odeme_OnProv_WMD_ResultModel
+@{
+    ViewData["Title"] = "TP_Islem_Odeme_OnProv_WMD Test Sonucu";
+    var isSecure = TempData["IsSecure"] as bool? ?? false;
+    var threeDHtml = TempData["ThreeDHtml"] as string ?? "";
+    var orderId = TempData["OrderId"] as string ?? "";
+    var amount = TempData["Amount"] as string ?? "";
+    var islemGUID = TempData["IslemGUID"] as string ?? "";
+    var ucdMD = TempData["UCD_MD"] as string ?? "";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0">
+                        @if (Model.IsSuccess)
+                        {
+                            <i class="fas fa-check-circle text-success"></i>
+                            if (isSecure && !string.IsNullOrEmpty(threeDHtml))
+                            {
+                                <span>3D Secure Ön Provizyon Başlatıldı</span>
+                            }
+                            else
+                            {
+                                <span>NonSecure Ön Provizyon Başarılı</span>
+                            }
+                        }
+                        else
+                        {
+                            <i class="fas fa-times-circle text-danger"></i>
+                            <span>Ön Provizyon Başarısız</span>
+                        }
+                    </h4>
+                    <p class="card-text mt-2 mb-0">
+                        <small class="text-muted">
+                            <i class="fas fa-clock"></i> Test Zamanı: @Model.TestTime.ToString("dd.MM.yyyy HH:mm:ss")
+                        </small>
+                    </p>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Sol Taraf - İşlem Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-info-circle"></i> İşlem Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td><strong>Sonuç:</strong></td>
+                                            <td>
+                                                @if (Model.IsSuccess)
+                                                {
+                                                    <span class="badge bg-success">@Model.Sonuc</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">@Model.Sonuc</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Açıklama:</strong></td>
+                                            <td>@Model.Sonuc_Str</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Sipariş ID:</strong></td>
+                                            <td><code>@Model.Siparis_ID</code></td>
+                                        </tr>
+                                        @if (!string.IsNullOrEmpty(Model.Islem_ID))
+                                        {
+                                            <tr>
+                                                <td><strong>İşlem ID:</strong></td>
+                                                <td><code>@Model.Islem_ID</code></td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Islem_GUID))
+                                        {
+                                            <tr>
+                                                <td><strong>İşlem GUID:</strong></td>
+                                                <td><code>@Model.Islem_GUID</code></td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.UCD_MD))
+                                        {
+                                            <tr>
+                                                <td><strong>UCD MD:</strong></td>
+                                                <td><code>@Model.UCD_MD?.Substring(0, Math.Min(20, Model.UCD_MD?.Length ?? 0))...</code></td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sağ Taraf - Banka Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-university"></i> Banka Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        @if (!string.IsNullOrEmpty(Model.Bank_Trans_ID))
+                                        {
+                                            <tr>
+                                                <td><strong>Banka Trans ID:</strong></td>
+                                                <td><code>@Model.Bank_Trans_ID</code></td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Bank_AuthCode))
+                                        {
+                                            <tr>
+                                                <td><strong>Auth Code:</strong></td>
+                                                <td><code>@Model.Bank_AuthCode</code></td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Bank_HostMsg))
+                                        {
+                                            <tr>
+                                                <td><strong>Host Message:</strong></td>
+                                                <td>@Model.Bank_HostMsg</td>
+                                            </tr>
+                                        }
+                                        @if (Model.Banka_Sonuc_Kod != 0)
+                                        {
+                                            <tr>
+                                                <td><strong>Banka Sonuç:</strong></td>
+                                                <td>
+                                                    @if (Model.Banka_Sonuc_Kod == 0)
+                                                    {
+                                                        <span class="badge bg-success">@Model.Banka_Sonuc_Kod</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-warning">@Model.Banka_Sonuc_Kod</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Bank_HostRefNum))
+                                        {
+                                            <tr>
+                                                <td><strong>RRN:</strong></td>
+                                                <td><code>@Model.Bank_HostRefNum</code></td>
+                                            </tr>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.Bank_Extra))
+                                        {
+                                            <tr>
+                                                <td><strong>Extra:</strong></td>
+                                                <td>@Model.Bank_Extra</td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3D Secure Bilgileri -->
+                    @if (isSecure && !string.IsNullOrEmpty(threeDHtml))
+                    {
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-shield-alt"></i> 3D Secure İşlemi</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i>
+                                            3D Secure doğrulama gerekli. Lütfen aşağıdaki butona tıklayarak 3D doğrulamayı tamamlayın.
+                                        </div>
+                                        <div class="text-center">
+                                            <button type="button" class="btn btn-primary btn-lg" onclick="start3DPayment()">
+                                                <i class="fas fa-shield-alt"></i> 3D Secure Doğrulamayı Başlat
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (!Model.IsSuccess && !string.IsNullOrEmpty(Model.ErrorMessage))
+                    {
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <div class="alert alert-danger">
+                                    <h6><i class="fas fa-exclamation-triangle"></i> Hata Detayı</h6>
+                                    <p class="mb-0">@Model.ErrorMessage</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Action Buttons -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a href="@Url.Action("TP_Islem_Odeme_OnProv_WMD", "Test")" class="btn btn-secondary me-md-2">
+                                    <i class="fas fa-redo"></i> Yeni Test
+                                </a>
+                                <a href="@Url.Action("Index", "Test")" class="btn btn-primary">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Sayfa yüklendiğinde otomatik 3D başlatma
+        @if (isSecure && !string.IsNullOrEmpty(threeDHtml))
+        {
+            <text>
+            $(document).ready(function() {
+                console.log('3D Secure ön provizyon işlemi otomatik başlatılıyor...');
+                // 1 saniye sonra otomatik 3D başlat
+                setTimeout(function() {
+                    start3DPayment();
+                }, 1000);
+            });
+            </text>
+        }
+
+        // 3D ödeme işlemini başlat
+        function start3DPayment() {
+            try {
+                var threeDHtml = @Html.Raw(Json.Serialize(threeDHtml));
+                var orderData = {
+                    orderId: '@orderId',
+                    amount: '@amount',
+                    methodType: 'OnProv_WMD',
+                    cancelUrl: '@Url.Action("TP_Islem_Odeme_OnProv_WMD", "Test")',
+                    retryFunction: function() {
+                        location.reload();
+                    }
+                };
+                
+                if (threeDHtml && threeDHtml.trim() !== '' && threeDHtml !== 'NONSECURE') {
+                    start3DProcess(threeDHtml, orderData);
+                } else {
+                    alert('3D Secure HTML içeriği bulunamadı!');
+                }
+            } catch (error) {
+                console.error('3D işlem başlatma hatası:', error);
+                alert('3D işlem başlatılırken hata oluştu: ' + error.message);
+            }
+        }
+    </script>
+} 

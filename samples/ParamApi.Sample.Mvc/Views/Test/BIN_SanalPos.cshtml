@@ -1,0 +1,203 @@
+@model BIN_SanalPos_TestModel
+@{
+    ViewData["Title"] = "BIN_SanalPos - BIN Sorgulama";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-credit-card me-2"></i>
+                        BIN_SanalPos - BIN Sorgulama
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-1"></i> Servis Bilgileri</h6>
+                        <ul class="mb-0">
+                            <li><strong>Amaç:</strong> Kredi kartı BIN bilgilerini sorgulama</li>
+                            <li><strong>Metod:</strong> BIN_SanalPos</li>
+                            <li><strong>Parametreler:</strong> BIN (6-8 hane, opsiyonel)</li>
+                            <li><strong>Dönüş:</strong> Banka bilgileri, kart tipi, SanalPOS_ID</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="BIN_SanalPos" method="post" id="binForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="BIN" class="form-label">
+                                        <i class="fas fa-hashtag me-1"></i>
+                                        @Html.DisplayNameFor(m => m.BIN)
+                                    </label>
+                                    <input asp-for="BIN" class="form-control" type="text" 
+                                           placeholder="540667 (6 hane) veya 54066701 (8 hane)"
+                                           maxlength="8" />
+                                    <span asp-validation-for="BIN" class="text-danger"></span>
+                                    <div class="form-text">
+                                        Boş bırakılırsa tüm BIN'ler listelenir. 6 veya 8 haneli olmalıdır.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Örnek BIN Değerleri -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-clipboard-list me-1"></i>
+                                    Örnek BIN Değerleri
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>6 Haneli BIN'ler:</h6>
+                                        <div class="row g-2">
+                                            @foreach (var bin in BIN_SanalPos_TestModel.Sample6DigitBins)
+                                            {
+                                                <div class="col-12">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm w-100 text-start bin-btn"
+                                                            data-bin="@bin.BIN">
+                                                        <strong>@bin.BIN</strong> - @bin.BankName
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>8 Haneli BIN'ler:</h6>
+                                        <div class="row g-2">
+                                            @foreach (var bin in BIN_SanalPos_TestModel.Sample8DigitBins)
+                                            {
+                                                <div class="col-12">
+                                                    <button type="button" class="btn btn-outline-success btn-sm w-100 text-start bin-btn"
+                                                            data-bin="@bin.BIN">
+                                                        <strong>@bin.BIN</strong> - @bin.BankName
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" id="clearBinBtn">
+                                        <i class="fas fa-list me-1"></i>
+                                        Tüm BIN'leri Listele (BIN alanını boş bırak)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                    <i class="fas fa-search me-2"></i>
+                                    BIN Bilgilerini Sorgula
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="resetForm()">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- BIN Bilgi Kartı -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-question-circle me-1"></i>
+                        BIN Sorgulama Hakkında
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>🔍 BIN Nedir?</h6>
+                            <ul class="list-unstyled small">
+                                <li>• Bank Identification Number</li>
+                                <li>• Kredi kartının ilk 6-8 hanesi</li>
+                                <li>• Kartın hangi bankaya ait olduğunu gösterir</li>
+                                <li>• Kart tipi bilgisini içerir (Visa, MasterCard, vb.)</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>📊 Dönüş Bilgileri</h6>
+                            <ul class="list-unstyled small">
+                                <li>• Banka adı ve kodu</li>
+                                <li>• Kart markası (Visa, MasterCard, vb.)</li>
+                                <li>• Kart tipi (Debit, Credit, vb.)</li>
+                                <li>• SanalPOS_ID bilgisi</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // BIN seçimi
+            $('.bin-btn').click(function() {
+                const bin = $(this).data('bin');
+                $('#BIN').val(bin);
+                
+                $('.bin-btn').removeClass('btn-primary btn-success').addClass('btn-outline-primary btn-outline-success');
+                $(this).removeClass('btn-outline-primary btn-outline-success').addClass('btn-primary');
+            });
+
+            // Tüm BIN'leri listele
+            $('#clearBinBtn').click(function() {
+                $('#BIN').val('');
+                $('.bin-btn').removeClass('btn-primary btn-success').addClass('btn-outline-primary btn-outline-success');
+                $(this).removeClass('btn-outline-secondary').addClass('btn-secondary');
+            });
+
+            // BIN input formatlaması
+            $('#BIN').on('input', function() {
+                let value = $(this).val().replace(/\D/g, ''); // Sadece rakamlar
+                if (value.length > 8) {
+                    value = value.substring(0, 8);
+                }
+                $(this).val(value);
+                
+                // BIN butonlarını sıfırla
+                $('.bin-btn').removeClass('btn-primary btn-success').addClass('btn-outline-primary btn-outline-success');
+                $('#clearBinBtn').removeClass('btn-secondary').addClass('btn-outline-secondary');
+            });
+
+            // Form validasyonu
+            $('#binForm').on('submit', function(e) {
+                const bin = $('#BIN').val().trim();
+                
+                if (bin && (bin.length < 6 || bin.length > 8)) {
+                    e.preventDefault();
+                    alert('BIN değeri 6 veya 8 haneli olmalıdır.');
+                    return false;
+                }
+                
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Sorgulanıyor...');
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('binForm').reset();
+            $('.bin-btn').removeClass('btn-primary btn-success').addClass('btn-outline-primary btn-outline-success');
+            $('#clearBinBtn').removeClass('btn-secondary').addClass('btn-outline-secondary');
+        }
+    </script>
+} 

@@ -1,0 +1,139 @@
+@{
+    ViewData["Title"] = "KS_Tahsilat - Ödeme Başarılı";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-check-circle"></i>
+                        Ödeme Başarılı!
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> Tebrikler!</h5>
+                        <p class="mb-0">Ödeme işleminiz başarıyla tamamlanmıştır.</p>
+                    </div>
+
+                    @* KS_Tahsilat Callback Bilgileri *@
+                    @if (TempData["KS_Tahsilat_Callback"] != null)
+                    {
+                        var ksCallbackJson = TempData["KS_Tahsilat_Callback"].ToString();
+                        var ksCallback = System.Text.Json.JsonSerializer.Deserialize<ParamApi.Sample.Mvc.Models.KS_Tahsilat_CallbackModel>(ksCallbackJson);
+                        
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0"><i class="fas fa-credit-card"></i> KS_Tahsilat Callback Bilgileri</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-info">
+                                    <strong>Durum:</strong> 
+                                    @if (ksCallback.IsSuccess)
+                                    {
+                                        <span class="badge bg-success">Başarılı</span>
+                                        <span class="text-muted"> - Sonuç > 0, İşlem_ID > 0, Dekont_ID > 0</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">Başarısız</span>
+                                    }
+                                </div>
+                                
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Sonuç:</strong></td>
+                                        <td><span class="badge @(int.TryParse(ksCallback.TURKPOS_RETVAL_Sonuc, out var sonuc) && sonuc > 0 ? "bg-success" : "bg-danger")">@ksCallback.TURKPOS_RETVAL_Sonuc</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Açıklama:</strong></td>
+                                        <td>@ksCallback.TURKPOS_RETVAL_Sonuc_Str</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>GUID:</strong></td>
+                                        <td><code>@ksCallback.TURKPOS_RETVAL_GUID</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>İşlem Tarihi:</strong></td>
+                                        <td>@ksCallback.TURKPOS_RETVAL_Islem_Tarih</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dekont ID:</strong></td>
+                                        <td><code>@ksCallback.TURKPOS_RETVAL_Dekont_ID</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Tahsilat Tutarı:</strong></td>
+                                        <td><strong>@ksCallback.TURKPOS_RETVAL_Tahsilat_Tutari TL</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ödeme Tutarı:</strong></td>
+                                        <td><strong>@ksCallback.TURKPOS_RETVAL_Odeme_Tutari TL</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sipariş ID:</strong></td>
+                                        <td><code>@ksCallback.TURKPOS_RETVAL_Siparis_ID</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>İşlem ID:</strong></td>
+                                        <td><code>@ksCallback.TURKPOS_RETVAL_Islem_ID</code></td>
+                                    </tr>
+                                    @if (!string.IsNullOrEmpty(ksCallback.TURKPOS_RETVAL_Ext_Data))
+                                    {
+                                        <tr>
+                                            <td><strong>Extra Data:</strong></td>
+                                            <td><code style="word-break: break-all;">@ksCallback.TURKPOS_RETVAL_Ext_Data</code></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+                    @if (ViewBag.Parameters != null)
+                    {
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6>
+                                    <i class="fas fa-info-circle"></i> Tüm Gelen Parametreler
+                                    <button type="button" class="btn btn-sm btn-outline-secondary float-end" data-bs-toggle="collapse" data-bs-target="#allParams">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </h6>
+                            </div>
+                            <div class="collapse" id="allParams">
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        @foreach (var param in (Dictionary<string, string>)ViewBag.Parameters)
+                                        {
+                                            <tr>
+                                                <td><strong>@param.Key:</strong></td>
+                                                <td><code style="word-break: break-all;">@param.Value</code></td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="@Url.Action("Index", "Test")" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Test Merkezine Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // KS_Tahsilat Success sayfası yüklendi
+            console.log('KS_Tahsilat Success sayfası yüklendi');
+        });
+    </script>
+} 

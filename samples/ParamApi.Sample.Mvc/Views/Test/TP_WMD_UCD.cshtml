@@ -1,0 +1,401 @@
+@model ParamApi.Sample.Mvc.Models.TP_WMD_UCD_TestModel
+@{
+    ViewData["Title"] = "TP_WMD_UCD - 3D Secure Ödeme Testi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <!-- Test menüsü -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-credit-card"></i> Test Menüsü
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        <div class="list-group-item bg-light">
+                            <strong><i class="fas fa-server"></i> TurkPos Servisleri</strong>
+                        </div>
+                        <a href="@Url.Action("TP_WMD_UCD", "Test")" class="list-group-item list-group-item-action active">
+                            <i class="fas fa-shield-alt"></i> TP_WMD_UCD
+                            <small class="text-muted d-block">3D Secure Ödeme</small>
+                        </a>
+                        <a href="@Url.Action("TP_Islem_Odeme_OnProv_WMD", "Test")" class="list-group-item list-group-item-action">
+                            <i class="fas fa-clock"></i> TP_Islem_Odeme_OnProv_WMD
+                            <small class="text-muted d-block">Ön Provizyon İşlemi</small>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Kartları -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-credit-card"></i> Test Kartları
+                    </h6>
+                </div>
+                <div class="card-body p-2">
+                    <div id="testCardsContainer">
+                        <div class="text-center">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Yükleniyor...</span>
+                            </div>
+                            <small class="text-muted d-block mt-1">Test kartları yükleniyor...</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <div class="col-md-9">
+        <!-- Ana içerik alanı -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-shield-alt"></i> TP_WMD_UCD - 3D Secure Ödeme Testi
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-info-circle"></i> Bilgi</h6>
+                    <p class="mb-0">
+                        Bu test, 3D Secure ödeme işlemini başlatır. Test kartları ile güvenli ödeme akışını test edebilirsiniz.
+                    </p>
+                </div>
+
+                <form asp-action="TP_WMD_UCD" method="post" id="paymentForm">
+                    <div class="row">
+                        <!-- Kart Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-credit-card"></i> Kart Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="KK_Sahibi" class="form-label"></label>
+                                        <input asp-for="KK_Sahibi" class="form-control" placeholder="Kart sahibinin adı soyadı" />
+                                        <span asp-validation-for="KK_Sahibi" class="text-danger"></span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label asp-for="KK_No" class="form-label"></label>
+                                        <input asp-for="KK_No" class="form-control" placeholder="1234 5678 9012 3456" />
+                                        <span asp-validation-for="KK_No" class="text-danger"></span>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label asp-for="KK_SK_Ay" class="form-label"></label>
+                                                <input asp-for="KK_SK_Ay" class="form-control" placeholder="12" />
+                                                <span asp-validation-for="KK_SK_Ay" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label asp-for="KK_SK_Yil" class="form-label"></label>
+                                                <input asp-for="KK_SK_Yil" class="form-control" placeholder="2026" />
+                                                <span asp-validation-for="KK_SK_Yil" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="mb-3">
+                                                <label asp-for="KK_CVC" class="form-label"></label>
+                                                <input asp-for="KK_CVC" class="form-control" placeholder="000" />
+                                                <span asp-validation-for="KK_CVC" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label asp-for="KK_Sahibi_GSM" class="form-label"></label>
+                                        <input asp-for="KK_Sahibi_GSM" class="form-control" placeholder="5xxxxxxxxx" />
+                                        <span asp-validation-for="KK_Sahibi_GSM" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- İşlem Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6 class="mb-0"><i class="fas fa-shopping-cart"></i> İşlem Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="Siparis_ID" class="form-label"></label>
+                                        <input asp-for="Siparis_ID" class="form-control" />
+                                        <span asp-validation-for="Siparis_ID" class="text-danger"></span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label asp-for="Siparis_Aciklama" class="form-label"></label>
+                                        <input asp-for="Siparis_Aciklama" class="form-control" />
+                                        <span asp-validation-for="Siparis_Aciklama" class="text-danger"></span>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label asp-for="Islem_Tutar" class="form-label"></label>
+                                                <input asp-for="Islem_Tutar" class="form-control" step="0.01" />
+                                                <span asp-validation-for="Islem_Tutar" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label asp-for="Toplam_Tutar" class="form-label"></label>
+                                                <input asp-for="Toplam_Tutar" class="form-control" step="0.01" />
+                                                <span asp-validation-for="Toplam_Tutar" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label asp-for="Taksit" class="form-label"></label>
+                                        <select asp-for="Taksit" class="form-select">
+                                            <option value="1">Peşin</option>
+                                            @for (int i = 2; i <= 12; i++)
+                                            {
+                                                <option value="@i">@i Taksit</option>
+                                            }
+                                        </select>
+                                        <span asp-validation-for="Taksit" class="text-danger"></span>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label asp-for="Islem_Guvenlik_Tip" class="form-label"></label>
+                                        <select asp-for="Islem_Guvenlik_Tip" class="form-select">
+                                            <option value="NS">NonSecure</option>
+                                            <option value="3D">3D Secure</option>
+                                        </select>
+                                        <span asp-validation-for="Islem_Guvenlik_Tip" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- URL Ayarları -->
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="fas fa-link"></i> URL Ayarları</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="Basarili_URL" class="form-label"></label>
+                                        <input asp-for="Basarili_URL" class="form-control" />
+                                        <span asp-validation-for="Basarili_URL" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="Hata_URL" class="form-label"></label>
+                                        <input asp-for="Hata_URL" class="form-control" />
+                                        <span asp-validation-for="Hata_URL" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="IPAdr" class="form-label"></label>
+                                        <input asp-for="IPAdr" class="form-control" />
+                                        <span asp-validation-for="IPAdr" class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label asp-for="Ref_URL" class="form-label"></label>
+                                        <input asp-for="Ref_URL" class="form-control" />
+                                        <span asp-validation-for="Ref_URL" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ek Veriler (Opsiyonel) -->
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h6 class="mb-0">
+                                <i class="fas fa-database"></i> Ek Veriler (Opsiyonel)
+                                <button type="button" class="btn btn-sm btn-outline-secondary float-end" data-bs-toggle="collapse" data-bs-target="#extraData">
+                                    <i class="fas fa-chevron-down"></i>
+                                </button>
+                            </h6>
+                        </div>
+                        <div class="collapse" id="extraData">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="Data1" class="form-label"></label>
+                                            <input asp-for="Data1" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label asp-for="Data2" class="form-label"></label>
+                                            <input asp-for="Data2" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label asp-for="Data3" class="form-label"></label>
+                                            <input asp-for="Data3" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label asp-for="Data4" class="form-label"></label>
+                                            <input asp-for="Data4" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label asp-for="Data5" class="form-label"></label>
+                                            <input asp-for="Data5" class="form-control" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label asp-for="Islem_ID" class="form-label"></label>
+                                            <input asp-for="Islem_ID" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Submit Butonu -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="@Url.Action("Index", "Test")" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Geri Dön
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-credit-card"></i> Ödeme İşlemini Başlat
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Test kartlarını yükle
+            loadTestCards();
+            
+            // Kart numarası formatla
+            $('#KK_No').on('input', function() {
+                var value = $(this).val().replace(/\D/g, '');
+                var formattedValue = value.replace(/(\d{4})(?=\d)/g, '$1 ');
+                $(this).val(formattedValue);
+            });
+            
+            // Sadece rakam girişi
+            $('#KK_CVC, #KK_SK_Ay, #KK_SK_Yil').on('input', function() {
+                $(this).val($(this).val().replace(/\D/g, ''));
+            });
+            
+            // Tutarları senkronize et
+            $('#Islem_Tutar').on('change', function() {
+                if ($('#Toplam_Tutar').val() == '1.00' || $('#Toplam_Tutar').val() == '') {
+                    $('#Toplam_Tutar').val($(this).val());
+                }
+            });
+            
+            // Form submit öncesi kart numarasından boşlukları kaldır
+            $('#paymentForm').on('submit', function(e) {
+                var cardNumber = $('#KK_No').val().replace(/\s/g, '');
+                $('#KK_No').val(cardNumber);
+            });
+        });
+        
+        // Test kartlarını yükle
+        function loadTestCards() {
+            $.get('@Url.Action("GetTestCards", "Test")')
+                .done(function(data) {
+                    var container = $('#testCardsContainer');
+                    container.empty();
+                    
+                    if (data && data.length > 0) {
+                        // Başarılı kartlar
+                        var successCards = data.filter(c => c.isSuccess);
+                        if (successCards.length > 0) {
+                            container.append('<h6 class="text-success mb-2"><i class="fas fa-check-circle"></i> Başarılı Kartlar</h6>');
+                            successCards.forEach(function(card) {
+                                var cardHtml = `
+                                    <div class="card-test-item p-2 mb-2 border rounded cursor-pointer" 
+                                         onclick="fillCardData('${card.cardNumber}', '${card.expiryMonth}', '${card.expiryYear}', '${card.cvcCode}', '${card.cardHolder}')">
+                                        <small class="fw-bold">${card.cardNumber}</small><br>
+                                        <small class="text-muted">${card.cardHolder}</small><br>
+                                        <small class="text-muted">${card.expiryMonth}/${card.expiryYear} - ${card.cvcCode}</small>
+                                    </div>`;
+                                container.append(cardHtml);
+                            });
+                        }
+                        
+                        // Başarısız kartlar
+                        var failCards = data.filter(c => !c.isSuccess);
+                        if (failCards.length > 0) {
+                            container.append('<h6 class="text-danger mb-2 mt-3"><i class="fas fa-times-circle"></i> Test Kartları</h6>');
+                            failCards.forEach(function(card) {
+                                var cardHtml = `
+                                    <div class="card-test-item p-2 mb-2 border rounded cursor-pointer" 
+                                         onclick="fillCardData('${card.cardNumber}', '${card.expiryMonth}', '${card.expiryYear}', '${card.cvcCode}', '${card.cardHolder}')">
+                                        <small class="fw-bold">${card.cardNumber}</small><br>
+                                        <small class="text-muted">${card.cardHolder}</small><br>
+                                        <small class="text-muted">${card.expiryMonth}/${card.expiryYear} - ${card.cvcCode}</small>
+                                    </div>`;
+                                container.append(cardHtml);
+                            });
+                        }
+                    } else {
+                        container.html('<p class="text-muted">Test kartları yüklenemedi.</p>');
+                    }
+                })
+                .fail(function() {
+                    $('#testCardsContainer').html('<p class="text-danger">Test kartları yüklenirken hata oluştu.</p>');
+                });
+        }
+
+        // Kart verilerini forma doldur
+        function fillCardData(cardNumber, month, year, cvc, holder) {
+            $('#KK_Sahibi').val(holder);
+            $('#KK_No').val(cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ')); // Boşluklu göster
+            $('#KK_SK_Ay').val(parseInt(month));
+            $('#KK_SK_Yil').val(parseInt(year));
+            $('#KK_CVC').val(cvc);
+            $('#KK_Sahibi_GSM').val('5555555555'); // Otomatik telefon
+            
+            // Hover efekti
+            $('.card-test-item').removeClass('bg-primary text-white');
+            event.currentTarget.classList.add('bg-primary', 'text-white');
+            
+            // 2 saniye sonra hover efektini kaldır
+            setTimeout(function() {
+                $('.card-test-item').removeClass('bg-primary text-white');
+            }, 2000);
+        }
+    </script>
+    
+    <style>
+        .card-test-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .card-test-item:hover {
+            background-color: #e3f2fd !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+} 

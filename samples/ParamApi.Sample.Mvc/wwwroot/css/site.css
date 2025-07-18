@@ -1,0 +1,224 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* =============================================================================
+   PARAM API TEMA RENK PALETI - #450D87 (Premium Mor/Purple)
+   ============================================================================= */
+
+:root {
+  --param-primary: #450D87;
+  --param-primary-dark: #3a0b73;
+  --param-primary-light: #5b1a9b;
+  --param-primary-lighter: #7c3ab3;
+  --param-primary-contrast: #ffffff;
+}
+
+/* Bootstrap Primary Renk Override */
+.btn-primary {
+  background-color: var(--param-primary) !important;
+  border-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--param-primary-dark) !important;
+  border-color: var(--param-primary-dark) !important;
+  box-shadow: 0 0 0 0.2rem rgba(69, 13, 135, 0.25) !important;
+}
+
+.btn-outline-primary {
+  color: var(--param-primary) !important;
+  border-color: var(--param-primary) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active {
+  background-color: var(--param-primary) !important;
+  border-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+/* Card ve Component Renkleri */
+.card-header {
+  background-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+  border-bottom: 1px solid var(--param-primary-dark) !important;
+}
+
+.card-header h1,
+.card-header h2,
+.card-header h3,
+.card-header h4,
+.card-header h5,
+.card-header h6 {
+  color: var(--param-primary-contrast) !important;
+  margin: 0;
+}
+
+.navbar-brand,
+.navbar-nav .nav-link {
+  color: var(--param-primary-contrast) !important;
+}
+
+.navbar {
+  background-color: var(--param-primary) !important;
+}
+
+/* Alert ve Durum Renkleri */
+.alert-info {
+  background-color: rgba(69, 13, 135, 0.1);
+  border-color: var(--param-primary-light);
+  color: var(--param-primary-dark);
+}
+
+.text-primary {
+  color: var(--param-primary) !important;
+}
+
+.bg-primary {
+  background-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+.border-primary {
+  border-color: var(--param-primary) !important;
+}
+
+/* Form Kontrolleri */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--param-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(69, 13, 135, 0.25) !important;
+}
+
+.form-check-input:checked {
+  background-color: var(--param-primary) !important;
+  border-color: var(--param-primary) !important;
+}
+
+/* List Group - Sidebar */
+.list-group-item-action:hover {
+  background-color: rgba(69, 13, 135, 0.1) !important;
+  color: var(--param-primary-dark) !important;
+}
+
+.list-group-item-action.active {
+  background-color: var(--param-primary) !important;
+  border-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+/* Badge ve Tag'ler */
+.badge.bg-primary {
+  background-color: var(--param-primary) !important;
+}
+
+/* Link Renkleri */
+a {
+  color: var(--param-primary) !important;
+}
+
+a:hover {
+  color: var(--param-primary-dark) !important;
+}
+
+/* Dropdown ve Modal */
+.dropdown-item:active {
+  background-color: var(--param-primary) !important;
+}
+
+.modal-header {
+  background-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+/* Progress Bar */
+.progress-bar {
+  background-color: var(--param-primary) !important;
+}
+
+/* Table Hover Efektleri */
+.table-hover tbody tr:hover {
+  background-color: rgba(69, 13, 135, 0.05) !important;
+}
+
+/* Pagination */
+.page-link {
+  color: var(--param-primary) !important;
+}
+
+.page-item.active .page-link {
+  background-color: var(--param-primary) !important;
+  border-color: var(--param-primary) !important;
+}
+
+/* Custom Classes */
+.param-gradient-bg {
+  background: linear-gradient(135deg, var(--param-primary) 0%, var(--param-primary-light) 100%) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+.param-shadow {
+  box-shadow: 0 4px 12px rgba(69, 13, 135, 0.15) !important;
+}
+
+.param-border-gradient {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, var(--param-primary), var(--param-primary-light)) 1;
+}
+
+/* Focus ve Active States */
+.btn:focus, 
+.btn:active:focus, 
+.btn-link.nav-link:focus, 
+.form-control:focus, 
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem var(--param-primary) !important;
+}
+
+/* Footer */
+.footer {
+  background-color: var(--param-primary-dark) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+/* Özel Test Sayfası Renkleri */
+.card-test-item:hover {
+  background-color: rgba(69, 13, 135, 0.1) !important;
+  cursor: pointer;
+}
+
+.card-test-item.selected {
+  background-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+/* Loading Spinner */
+.spinner-border {
+  color: var(--param-primary) !important;
+}
+
+/* Toast Bildirimler */
+.toast-header {
+  background-color: var(--param-primary) !important;
+  color: var(--param-primary-contrast) !important;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}

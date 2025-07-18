@@ -1,0 +1,250 @@
+@model TP_Ozel_Oran_SK_Guncelle_TestModel
+@{
+    ViewData["Title"] = "TP_Ozel_Oran_SK_Guncelle - Son Kullanıcı Özel Oran Güncelleme";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="fas fa-edit"></i> TP_Ozel_Oran_SK_Guncelle - Son Kullanıcı Özel Oran Güncelleme</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Açıklama -->
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-info-circle"></i> İşlem Açıklaması</h6>
+                        <p class="mb-2">Müşteri bazında özel komisyon oranlarını günceller.</p>
+                        <ul class="mb-0 small">
+                            <li><strong>Metod:</strong> TP_Ozel_Oran_SK_Guncelle</li>
+                            <li><strong>Parametre:</strong> Ozel_Oran_SK_ID ve taksit oranları (MO_1 - MO_12)</li>
+                            <li><strong>Kullanım:</strong> Müşteri bazında özel oranları güncellemek için</li>
+                            <li><strong>Gerekli:</strong> Önce TP_Ozel_Oran_SK_Liste çağırıp ID alın</li>
+                        </ul>
+                    </div>
+
+                    <!-- Test Formu -->
+                    <form asp-action="TP_Ozel_Oran_SK_Guncelle" method="post" id="ozelOranSKGuncelleForm">
+                        @Html.AntiForgeryToken()
+
+                        <!-- Özel Oran SK ID -->
+                        <div class="card border-primary mb-4">
+                            <div class="card-header bg-primary text-white">
+                                <h6 class="mb-0"><i class="fas fa-hashtag"></i> SK ID Bilgisi</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Ozel_Oran_SK_ID" class="form-label">
+                                        <i class="fas fa-hashtag text-primary"></i> Özel Oran SK ID
+                                    </label>
+                                    <input asp-for="Ozel_Oran_SK_ID" class="form-control" placeholder="SK Liste'den gelen ID değeri" />
+                                    <span asp-validation-for="Ozel_Oran_SK_ID" class="text-danger"></span>
+                                    <div class="form-text">
+                                        Önce <a href="@Url.Action("TP_Ozel_Oran_SK_Liste", "Test")" target="_blank">TP_Ozel_Oran_SK_Liste</a> çağırıp ID'yi alın
+                                    </div>
+                                </div>
+
+                                <!-- Hızlı ID Seçimi -->
+                                <div class="alert alert-light">
+                                    <small class="text-muted">
+                                        <strong>Test için örnek ID'ler:</strong>
+                                        @foreach (var id in TP_Ozel_Oran_SK_Guncelle_TestModel.SampleSKIds.Take(5))
+                                        {
+                                            <button type="button" class="btn btn-outline-secondary btn-sm me-1 mb-1" onclick="document.getElementById('Ozel_Oran_SK_ID').value='@id'">@id</button>
+                                        }
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Taksit Oranları -->
+                        <div class="card border-success">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="fas fa-percentage"></i> Taksit Oranları (%)</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-success">1-6 Taksit Oranları</h6>
+                                        
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_1" class="form-label">Tek Çekim</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_1" class="form-control" placeholder="1,25" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_1" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_2" class="form-label">2 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_2" class="form-control" placeholder="2,50" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_2" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_3" class="form-label">3 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_3" class="form-control" placeholder="3,75" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_3" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_4" class="form-label">4 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_4" class="form-control" placeholder="5,00" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_4" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_5" class="form-label">5 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_5" class="form-control" placeholder="6,25" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_5" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_6" class="form-label">6 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_6" class="form-control" placeholder="7,50" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_6" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h6 class="text-success">7-12 Taksit Oranları</h6>
+                                        
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_7" class="form-label">7 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_7" class="form-control" placeholder="8,75" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_7" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_8" class="form-label">8 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_8" class="form-control" placeholder="10,00" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_8" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_9" class="form-label">9 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_9" class="form-control" placeholder="11,25" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_9" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_10" class="form-label">10 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_10" class="form-control" placeholder="12,50" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_10" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_11" class="form-label">11 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_11" class="form-control" placeholder="13,75" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_11" class="text-danger"></span>
+                                        </div>
+
+                                        <div class="form-group mb-2">
+                                            <label asp-for="MO_12" class="form-label">12 Taksit</label>
+                                            <div class="input-group">
+                                                <input asp-for="MO_12" class="form-control" placeholder="15,00" />
+                                                <span class="input-group-text">%</span>
+                                            </div>
+                                            <span asp-validation-for="MO_12" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-warning mt-3">
+                                    <small>
+                                        <i class="fas fa-exclamation-triangle"></i> 
+                                        <strong>Dikkat:</strong> Oranları virgüllü formatta girin (örn: 1,25). 
+                                        Nokta kullanırsanız otomatik virgüle çevrilir.
+                                    </small>
+                                </div>
+
+                                <!-- Submit Butonu -->
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-warning btn-lg">
+                                        <i class="fas fa-save"></i> Özel Oran Güncelle
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Hızlı Linkler -->
+                    <div class="card mt-4 border-info">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0"><i class="fas fa-link"></i> İlgili İşlemler</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="@Url.Action("TP_Ozel_Oran_SK_Liste", "Test")" class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-users"></i> SK Liste (ID Almak İçin)
+                                </a>
+                                <a href="@Url.Action("TP_Ozel_Oran_Liste", "Test")" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-list"></i> Özel Oran Liste
+                                </a>
+                                <a href="@Url.Action("Index", "Test")" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Form submit olayını yakala
+            $('#ozelOranSKGuncelleForm').on('submit', function() {
+                $(this).find('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Güncelleniyor...');
+            });
+
+            // Nokta kullanımını virgüle çevir
+            $('input[type="text"]').on('blur', function() {
+                var value = $(this).val();
+                if (value.includes('.')) {
+                    $(this).val(value.replace(/\./g, ','));
+                }
+            });
+        });
+    </script>
+} 

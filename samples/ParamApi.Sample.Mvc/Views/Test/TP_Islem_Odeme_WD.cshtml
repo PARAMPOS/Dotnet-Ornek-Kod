@@ -1,0 +1,378 @@
+@model ParamApi.Sample.Mvc.Models.TP_Islem_Odeme_WD_TestModel
+@{
+    ViewData["Title"] = "TP_Islem_Odeme_WD Test";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <partial name="_TestSidebar" />
+        
+        <!-- Test Kartları -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-credit-card"></i> Yabancı Test Kartları
+                </h6>
+            </div>
+            <div class="card-body p-2">
+                <div id="testCardsContainer">
+                    <div class="text-center">
+                        <div class="spinner-border spinner-border-sm" role="status">
+                            <span class="visually-hidden">Yükleniyor...</span>
+                        </div>
+                        <small class="text-muted d-block mt-1">Test kartları yükleniyor...</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-globe"></i> TP_Islem_Odeme_WD Test
+                </h4>
+                <p class="card-text mt-2 mb-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Dövizli ödeme işlemi. Sadece yabancı kartlar ile çalışır. 3D Secure destekler.
+                    </small>
+                </p>
+            </div>
+            <div class="card-body">
+                <form asp-action="TP_Islem_Odeme_WD" method="post" id="paymentForm">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row">
+                        <!-- Döviz ve Kart Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-money-bill-alt"></i> Döviz ve Kart Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="Doviz_Kodu" class="form-label"></label>
+                                        <select asp-for="Doviz_Kodu" class="form-select">
+                                            <option value="TRL">TRL - Türk Lirası</option>
+                                            <option value="USD" selected>USD - Amerikan Doları</option>
+                                            <option value="EUR">EUR - Euro</option>
+                                            <option value="GBP">GBP - İngiliz Sterlini</option>
+                                        </select>
+                                        <span asp-validation-for="Doviz_Kodu" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="KK_Sahibi" class="form-label"></label>
+                                        <input asp-for="KK_Sahibi" class="form-control" />
+                                        <span asp-validation-for="KK_Sahibi" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="KK_No" class="form-label"></label>
+                                        <input asp-for="KK_No" class="form-control" placeholder="5406 6754 0667 5403" maxlength="19" />
+                                        <span asp-validation-for="KK_No" class="text-danger"></span>
+                                        <div class="form-text">Yabancı test kartı kullanın</div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label asp-for="KK_SK_Ay" class="form-label"></label>
+                                            <select asp-for="KK_SK_Ay" class="form-select">
+                                                @for (int i = 1; i <= 12; i++)
+                                                {
+                                                    <option value="@i" selected="@(i == 12)">@i.ToString("D2")</option>
+                                                }
+                                            </select>
+                                            <span asp-validation-for="KK_SK_Ay" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label asp-for="KK_SK_Yil" class="form-label"></label>
+                                            <input asp-for="KK_SK_Yil" class="form-control" type="number" min="2024" max="2040" placeholder="2030" maxlength="4" />
+                                            <span asp-validation-for="KK_SK_Yil" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label asp-for="KK_CVC" class="form-label"></label>
+                                            <input asp-for="KK_CVC" class="form-control" maxlength="3" />
+                                            <span asp-validation-for="KK_CVC" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="KK_Sahibi_GSM" class="form-label"></label>
+                                        <input asp-for="KK_Sahibi_GSM" class="form-control" placeholder="5555555555" />
+                                        <span asp-validation-for="KK_Sahibi_GSM" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- İşlem Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-shopping-cart"></i> İşlem Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="Siparis_ID" class="form-label"></label>
+                                        <input asp-for="Siparis_ID" class="form-control" />
+                                        <span asp-validation-for="Siparis_ID" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Siparis_Aciklama" class="form-label"></label>
+                                        <input asp-for="Siparis_Aciklama" class="form-control" />
+                                        <span asp-validation-for="Siparis_Aciklama" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label asp-for="Islem_Tutar" class="form-label"></label>
+                                            <div class="input-group">
+                                                <input asp-for="Islem_Tutar" class="form-control" type="number" step="0.01" min="0.01" max="999999.99" />
+                                                <span class="input-group-text">USD</span>
+                                            </div>
+                                            <span asp-validation-for="Islem_Tutar" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label asp-for="Toplam_Tutar" class="form-label"></label>
+                                            <div class="input-group">
+                                                <input asp-for="Toplam_Tutar" class="form-control" type="number" step="0.01" min="0.01" max="999999.99" />
+                                                <span class="input-group-text">USD</span>
+                                            </div>
+                                            <span asp-validation-for="Toplam_Tutar" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mt-3">
+                                        <div class="col-md-12">
+                                            <label asp-for="Islem_Guvenlik_Tip" class="form-label"></label>
+                                            <select asp-for="Islem_Guvenlik_Tip" class="form-select">
+                                                <option value="3D" selected>3D Secure</option>
+                                                <option value="NS">NonSecure</option>
+                                            </select>
+                                            <span asp-validation-for="Islem_Guvenlik_Tip" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- URL Bilgileri -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-link"></i> URL Bilgileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label asp-for="Basarili_URL" class="form-label"></label>
+                                    <input asp-for="Basarili_URL" class="form-control" type="text" />
+                                    <span asp-validation-for="Basarili_URL" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Hata_URL" class="form-label"></label>
+                                    <input asp-for="Hata_URL" class="form-control" type="text" />
+                                    <span asp-validation-for="Hata_URL" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label asp-for="IPAdr" class="form-label"></label>
+                                    <input asp-for="IPAdr" class="form-control" type="text" />
+                                    <span asp-validation-for="IPAdr" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Ref_URL" class="form-label"></label>
+                                    <input asp-for="Ref_URL" class="form-control" type="text" />
+                                    <span asp-validation-for="Ref_URL" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Extra Data (Opsiyonel) -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-database"></i> Extra Data (Opsiyonel)</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label asp-for="Data1" class="form-label"></label>
+                                    <input asp-for="Data1" class="form-control" />
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Data2" class="form-label"></label>
+                                    <input asp-for="Data2" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-4">
+                                    <label asp-for="Data3" class="form-label"></label>
+                                    <input asp-for="Data3" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Data4" class="form-label"></label>
+                                    <input asp-for="Data4" class="form-control" />
+                                </div>
+                                <div class="col-md-4">
+                                    <label asp-for="Data5" class="form-label"></label>
+                                    <input asp-for="Data5" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <div class="col-md-12">
+                                    <label asp-for="Islem_ID" class="form-label"></label>
+                                    <input asp-for="Islem_ID" class="form-control" placeholder="Otomatik oluşturulacak" />
+                                    <span asp-validation-for="Islem_ID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Index", "Test")" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Geri
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-globe"></i> Dövizli Ödeme Başlat
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // Test kartlarını yükle
+            loadTestCards();
+            
+            // Kart numarası formatla
+            $('#KK_No').on('input', function() {
+                var value = $(this).val().replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                var formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                if (formattedValue !== $(this).val()) {
+                    $(this).val(formattedValue);
+                }
+            });
+            
+            // Yıl input'u için özel kontroller
+            $('#KK_SK_Yil').on('input', function() {
+                var value = $(this).val();
+                if (value.length > 4) {
+                    $(this).val(value.substring(0, 4));
+                }
+            });
+            
+            // Tutarları senkronize et
+            $('#Islem_Tutar').on('change input', function() {
+                var value = $(this).val();
+                if (value && value > 0) {
+                    if ($('#Toplam_Tutar').val() == '10.00' || $('#Toplam_Tutar').val() == '') {
+                        $('#Toplam_Tutar').val(value);
+                    }
+                }
+            });
+
+            // Döviz değiştiğinde currency symbol'ı güncelle
+            $('#Doviz_Kodu').on('change', function() {
+                var currency = $(this).val();
+                var symbol = currency === 'TRL' ? '₺' : 
+                           currency === 'USD' ? '$' : 
+                           currency === 'EUR' ? '€' : 
+                           currency === 'GBP' ? '£' : currency;
+                
+                $('.input-group-text').text(symbol);
+            });
+            
+            // Form submit öncesi validasyon
+            $('#paymentForm').on('submit', function(e) {
+                // Kart numarasından boşlukları kaldır
+                var cardNumber = $('#KK_No').val().replace(/\s/g, '');
+                $('#KK_No').val(cardNumber);
+                
+                // Submit sırasında loading göster
+                var submitBtn = $(this).find('button[type="submit"]');
+                submitBtn.prop('disabled', true);
+                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> İşleniyor...');
+            });
+        });
+
+        // Test kartlarını yükle
+        function loadTestCards() {
+            $.get('@Url.Action("GetTestCards", "Test")')
+                .done(function(data) {
+                    var container = $('#testCardsContainer');
+                    container.empty();
+                    
+                    if (data && data.length > 0) {
+                        // Yabancı kartları filtrele
+                        var foreignCards = data.filter(c => c.cardType === 'VISA' || c.cardType === 'MASTERCARD');
+                        
+                        if (foreignCards.length > 0) {
+                            container.append('<h6 class="text-info mb-2"><i class="fas fa-globe"></i> Yabancı Kartlar</h6>');
+                            foreignCards.forEach(function(card) {
+                                var cardHtml = `
+                                    <div class="card-test-item p-2 mb-2 border rounded cursor-pointer" 
+                                         onclick="fillCardData('${card.cardNumber}', '${card.expiryMonth}', '${card.expiryYear}', '${card.cvcCode}', '${card.cardHolder}')">
+                                        <small class="fw-bold">${card.cardNumber}</small><br>
+                                        <small class="text-muted">${card.cardHolder}</small><br>
+                                        <small class="text-muted">${card.expiryMonth}/${card.expiryYear} - ${card.cvcCode}</small>
+                                    </div>`;
+                                container.append(cardHtml);
+                            });
+                        } else {
+                            container.html('<p class="text-warning">Yabancı test kartı bulunamadı.</p>');
+                        }
+                    } else {
+                        container.html('<p class="text-muted">Test kartları yüklenemedi.</p>');
+                    }
+                })
+                .fail(function() {
+                    $('#testCardsContainer').html('<p class="text-danger">Test kartları yüklenirken hata oluştu.</p>');
+                });
+        }
+
+        // Kart verilerini forma doldur
+        function fillCardData(cardNumber, month, year, cvc, holder) {
+            $('#KK_Sahibi').val(holder);
+            $('#KK_No').val(cardNumber.replace(/(\d{4})(?=\d)/g, '$1 ')); // Boşluklu göster
+            $('#KK_SK_Ay').val(parseInt(month));
+            $('#KK_SK_Yil').val(year.toString());
+            $('#KK_CVC').val(cvc);
+            $('#KK_Sahibi_GSM').val('5555555555'); // Otomatik telefon
+            
+            // Hover efekti
+            $('.card-test-item').removeClass('bg-primary text-white');
+            event.currentTarget.classList.add('bg-primary', 'text-white');
+            
+            // 2 saniye sonra hover efektini kaldır
+            setTimeout(function() {
+                $('.card-test-item').removeClass('bg-primary text-white');
+            }, 2000);
+        }
+    </script>
+    
+    <style>
+        .card-test-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .card-test-item:hover {
+            background-color: #e3f2fd !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+} 

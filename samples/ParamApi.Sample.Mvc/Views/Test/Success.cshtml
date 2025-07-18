@@ -1,0 +1,203 @@
+@{
+    ViewData["Title"] = "Ödeme Başarılı";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-check-circle"></i>
+                        @if (ViewBag.MethodType == "OnProv_WMD")
+                        {
+                            <span>Ön Provizyon Başarılı!</span>
+                        }
+                        else
+                        {
+                            <span>Ödeme Başarılı!</span>
+                        }
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> Tebrikler!</h5>
+                        @if (ViewBag.MethodType == "OnProv_WMD")
+                        {
+                            <p class="mb-0">Ön provizyon işleminiz başarıyla tamamlanmıştır.</p>
+                        }
+                        else
+                        {
+                            <p class="mb-0">Ödeme işleminiz başarıyla tamamlanmıştır.</p>
+                        }
+                    </div>
+                    
+                    @if (ViewBag.CallbackModel != null)
+                    {
+                        var callbackModel = (ParamApi.Sample.Mvc.Models.ThreeDCallbackModel)ViewBag.CallbackModel;
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h6><i class="fas fa-shield-alt"></i> 3D Secure Callback Bilgileri</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>3D Durumu:</strong></td>
+                                        <td>
+                                            @if (callbackModel.Is3DSuccessful)
+                                            {
+                                                <span class="badge bg-success">Başarılı (mdStatus: @callbackModel.mdStatus)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">Başarısız (mdStatus: @callbackModel.mdStatus)</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sipariş ID:</strong></td>
+                                        <td><code>@callbackModel.orderId</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>İşlem GUID:</strong></td>
+                                        <td><code>@callbackModel.islemGUID</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>İşlem Tutarı:</strong></td>
+                                        <td><code>@callbackModel.transactionAmount</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>MD Değeri:</strong></td>
+                                        <td><code style="word-break: break-all;">@callbackModel.md</code></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+                    @* NOT: KS_Tahsilat artık kendi özel Success sayfasını kullanır (KS_Tahsilat_Success.cshtml) *@
+
+                    @if (ViewBag.PaySuccess == true && ViewBag.PayResponse != null)
+                    {
+                        var payResponse = (ParamApi.Sdk.Models.Responses.TP_WMD_PAY_Response)ViewBag.PayResponse;
+                        
+                        <div class="card mt-3">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="fas fa-check-circle"></i> TP_WMD_PAY İşlemi Başarılı</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Sonuç:</strong></td>
+                                        <td><span class="badge bg-success">@payResponse.Sonuc</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Açıklama:</strong></td>
+                                        <td>@payResponse.Sonuc_Ack</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Dekont ID:</strong></td>
+                                        <td><code>@payResponse.Dekont_ID</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sipariş ID:</strong></td>
+                                        <td><code>@payResponse.Siparis_ID</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Banka Trans ID:</strong></td>
+                                        <td><code>@payResponse.Bank_Trans_ID</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Banka Auth Code:</strong></td>
+                                        <td><code>@payResponse.Bank_AuthCode</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Komisyon Oranı:</strong></td>
+                                        <td>@payResponse.Komisyon_Oran.ToString("F2")%</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    else if (ViewBag.PaySuccess == false)
+                    {
+                        <div class="card mt-3">
+                            <div class="card-header bg-danger text-white">
+                                <h6 class="mb-0"><i class="fas fa-times-circle"></i> TP_WMD_PAY İşlemi Başarısız</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-danger">
+                                    <strong>Hata:</strong> @ViewBag.PayError
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @if (ViewBag.Parameters != null)
+                    {
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6>
+                                    <i class="fas fa-info-circle"></i> Tüm Gelen Parametreler
+                                    <button type="button" class="btn btn-sm btn-outline-secondary float-end" data-bs-toggle="collapse" data-bs-target="#allParams">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </h6>
+                            </div>
+                            <div class="collapse" id="allParams">
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        @foreach (var param in (Dictionary<string, string>)ViewBag.Parameters)
+                                        {
+                                            <tr>
+                                                <td><strong>@param.Key:</strong></td>
+                                                <td><code style="word-break: break-all;">@param.Value</code></td>
+                                            </tr>
+                                        }
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="@Url.Action("Index", "Test")" class="btn btn-primary">
+                            <i class="fas fa-home"></i> Test Merkezine Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Sayfanın yüklendiğini göster
+            console.log('Success sayfası yüklendi');
+            
+            // 3D Modal'ı kapat (eğer açıksa)
+            if (typeof threeDModal !== 'undefined' && threeDModal) {
+                try {
+                    threeDModal.hide();
+                    console.log('3D Modal kapatıldı');
+                } catch (e) {
+                    console.log('3D Modal kapatma hatası:', e);
+                }
+            }
+            
+            // Parent window'a 3D işleminin tamamlandığını bildir
+            if (window.parent && window.parent !== window) {
+                try {
+                    if (window.parent.check3DCallback) {
+                        window.parent.check3DCallback();
+                    }
+                } catch (e) {
+                    console.log('Parent callback hatası:', e);
+                }
+            }
+        });
+    </script>
+} 

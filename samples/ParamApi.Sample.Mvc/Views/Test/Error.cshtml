@@ -1,0 +1,52 @@
+@{
+    ViewData["Title"] = "Ödeme Hatası";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-times-circle"></i> Ödeme Hatası!
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-times-circle"></i> Üzgünüz!</h5>
+                        <p class="mb-0">Ödeme işleminiz tamamlanamadı. Lütfen tekrar deneyiniz.</p>
+                    </div>
+                    
+                    @if (ViewBag.Parameters != null)
+                    {
+                        <div class="card">
+                            <div class="card-header">
+                                <h6><i class="fas fa-info-circle"></i> Gelen Parametreler</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    @foreach (var param in (Dictionary<string, string>)ViewBag.Parameters)
+                                    {
+                                        <tr>
+                                            <td><strong>@param.Key:</strong></td>
+                                            <td><code>@param.Value</code></td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        <a href="@Url.Action("TP_WMD_UCD", "Test")" class="btn btn-primary me-md-2">
+                            <i class="fas fa-redo"></i> Tekrar Dene
+                        </a>
+                        <a href="@Url.Action("Index", "Test")" class="btn btn-secondary">
+                            <i class="fas fa-home"></i> Test Merkezine Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

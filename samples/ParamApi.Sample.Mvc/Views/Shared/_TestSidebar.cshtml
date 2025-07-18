@@ -1,0 +1,146 @@
+<!-- Sol sidebar - Test menüsü -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-credit-card"></i> Test Menüsü
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="list-group list-group-flush">
+            <!-- TurkPos Servisleri -->
+            <div class="list-group-item bg-light">
+                <strong><i class="fas fa-server"></i> TurkPos Servisleri</strong>
+            </div>
+            <a href="@Url.Action("TP_WMD_UCD", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-shield-alt"></i> TP_WMD_UCD
+                <small class="text-muted d-block">3D Secure Ödeme</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Odeme_OnProv_WMD", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-clock"></i> TP_Islem_Odeme_OnProv_WMD
+                <small class="text-muted d-block">Ön Provizyon İşlemi</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Odeme_OnProv_Kapa", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-check-circle"></i> TP_Islem_Odeme_OnProv_Kapa
+                <small class="text-muted d-block">Ön Provizyon Kapama</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Iptal_OnProv", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-times-circle"></i> TP_Islem_Iptal_OnProv
+                <small class="text-muted d-block">Ön Provizyon İptal</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Odeme_WD", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-globe"></i> TP_Islem_Odeme_WD
+                <small class="text-muted d-block">Dövizli Ödeme</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Odeme_BKM", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-mobile-alt"></i> TP_Islem_Odeme_BKM
+                <small class="text-muted d-block">BKM Express</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Sorgulama4", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-search"></i> TP_Islem_Sorgulama4
+                <small class="text-muted d-block">İşlem Sorgulama</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Iptal_Iade_Kismi2", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-ban"></i> TP_Islem_Iptal_Iade_Kismi2
+                <small class="text-muted d-block">İptal/İade</small>
+            </a>
+            <a href="@Url.Action("TP_Ozel_Oran_Liste", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-list"></i> TP_Ozel_Oran_Liste
+                <small class="text-muted d-block">Özel Oran Listesi</small>
+            </a>
+            <a href="@Url.Action("TP_Ozel_Oran_SK_Liste", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-users"></i> TP_Ozel_Oran_SK_Liste
+                <small class="text-muted d-block">Son Kullanıcı Oran Listesi</small>
+            </a>
+            <a href="@Url.Action("TP_Ozel_Oran_SK_Guncelle", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-edit"></i> TP_Ozel_Oran_SK_Guncelle
+                <small class="text-muted d-block">Son Kullanıcı Oran Güncelleme</small>
+            </a>
+            <a href="@Url.Action("TP_Mutabakat_Ozet", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-chart-bar"></i> TP_Mutabakat_Ozet
+                <small class="text-muted d-block">Mutabakat Özet</small>
+            </a>
+            <a href="@Url.Action("TP_Mutabakat_Detay", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-list-alt"></i> TP_Mutabakat_Detay
+                <small class="text-muted d-block">Mutabakat Detay</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Izleme", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-eye"></i> TP_Islem_Izleme
+                <small class="text-muted d-block">İşlem İzleme</small>
+            </a>
+            <a href="@Url.Action("TP_Islem_Dekont_Gonder", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-envelope"></i> TP_Islem_Dekont_Gonder
+                <small class="text-muted d-block">Dekont E-posta</small>
+            </a>
+            
+            <!-- Kart Saklama Servisleri -->
+            <div class="list-group-item bg-light">
+                <strong><i class="fas fa-save"></i> Kart Saklama Servisleri</strong>
+            </div>
+            <a href="@Url.Action("KS_Kart_Ekle", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-plus"></i> KS_Kart_Ekle
+                <small class="text-muted d-block">Kart Kaydetme</small>
+            </a>
+            <a href="@Url.Action("KS_Tahsilat", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-credit-card"></i> KS_Tahsilat
+                <small class="text-muted d-block">Saklı Kart Ödeme</small>
+            </a>
+            
+            <!-- Diğer Servisleri -->
+            <div class="list-group-item bg-light">
+                <strong><i class="fas fa-tools"></i> Diğer Servisleri</strong>
+            </div>
+            <a href="@Url.Action("BIN_SanalPos", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-search-dollar"></i> BIN_SanalPos
+                <small class="text-muted d-block">BIN Sorgulama</small>
+            </a>
+            
+            <!-- Ana Sayfa -->
+            <div class="list-group-item bg-light">
+                <strong><i class="fas fa-home"></i> Ana Menü</strong>
+            </div>
+            <a href="@Url.Action("Index", "Test")" class="list-group-item list-group-item-action">
+                <i class="fas fa-home"></i> Test Ana Sayfası
+                <small class="text-muted d-block">Tüm Testler</small>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- SDK Bilgileri -->
+<div class="card mt-3">
+    <div class="card-header">
+        <h6 class="card-title mb-0">
+            <i class="fas fa-info-circle"></i> SDK Bilgileri
+        </h6>
+    </div>
+    <div class="card-body">
+        <small class="text-muted">
+            <strong>Ortam:</strong> Test<br>
+            <strong>Client Code:</strong> 10738<br>
+            <strong>SDK Version:</strong> v3.0<br>
+            <strong>API Endpoint:</strong> testposws.param.com.tr
+        </small>
+    </div>
+</div>
+
+<!-- Hızlı Eylemler -->
+<div class="card mt-3">
+    <div class="card-header">
+        <h6 class="card-title mb-0">
+            <i class="fas fa-bolt"></i> Hızlı Eylemler
+        </h6>
+    </div>
+    <div class="card-body">
+        <div class="d-grid gap-2">
+            <a href="@Url.Action("TP_WMD_UCD", "Test")" class="btn btn-outline-primary btn-sm">
+                <i class="fas fa-shield-alt"></i> 3D Ödeme Testi
+            </a>
+            <a href="@Url.Action("TP_Islem_Sorgulama4", "Test")" class="btn btn-outline-info btn-sm">
+                <i class="fas fa-search"></i> İşlem Sorgula
+            </a>
+            <a href="@Url.Action("BIN_SanalPos", "Test")" class="btn btn-outline-success btn-sm">
+                <i class="fas fa-search-dollar"></i> BIN Sorgula
+            </a>
+        </div>
+    </div>
+</div> 

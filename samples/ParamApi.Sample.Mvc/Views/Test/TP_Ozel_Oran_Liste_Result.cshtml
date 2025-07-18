@@ -1,0 +1,186 @@
+@model TP_Ozel_Oran_Liste_ResultModel
+@{
+    ViewData["Title"] = "TP_Ozel_Oran_Liste Sonuçları";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <!-- Başlık ve Durum -->
+            <div class="card mb-4">
+                <div class="card-header @(Model.IsSuccess ? "bg-success" : "bg-danger") text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            @if (Model.IsSuccess)
+                            {
+                                <i class="fas fa-check-circle"></i> @Html.Raw("TP_Ozel_Oran_Liste İşlemi Başarılı")
+                            }
+                            else
+                            {
+                                <i class="fas fa-times-circle"></i> @Html.Raw("TP_Ozel_Oran_Liste İşlemi Başarısız")
+                            }
+                        </h5>
+                        <div class="text-end">
+                            <small>@Model.ProcessTime.ToString("dd.MM.yyyy HH:mm:ss")</small><br>
+                            <small>@Model.ProcessDuration ms</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Test Sonuçları -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0"><i class="fas fa-list"></i> TP_Ozel_Oran_Liste Sonuçları</h6>
+                </div>
+                <div class="card-body">
+                    @if (Model.Response != null)
+                    {
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6>🎯 Temel Sonuç</h6>
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Sonuç:</strong></td>
+                                        <td><span class="badge @(Model.IsSuccess ? "bg-success" : "bg-danger")">@Model.Response.Sonuc</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Sonuç Mesajı:</strong></td>
+                                        <td>@Model.Response.Sonuc_Str</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Toplam Özel Oran:</strong></td>
+                                        <td><strong>@Model.Response.OzelOranBilgileri.Count adet</strong></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                @if (Model.Response.OzelOranBilgileri.Any())
+                                {
+                                    <h6>🏦 Kart Markaları</h6>
+                                    <div class="list-group">
+                                        @foreach (var oran in Model.Response.OzelOranBilgileri.Take(5))
+                                        {
+                                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                                <small>@oran.Kredi_Karti_Banka</small>
+                                                <span class="badge bg-primary">@oran.SanalPOS_ID</span>
+                                            </div>
+                                        }
+                                    </div>
+                                    @if (Model.Response.OzelOranBilgileri.Count > 5)
+                                    {
+                                        <small class="text-muted">... ve @(Model.Response.OzelOranBilgileri.Count - 5) tane daha</small>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        @if (Model.Response.OzelOranBilgileri.Any())
+                        {
+                            <!-- Detaylı Özel Oran Listesi -->
+                            <div class="mt-4">
+                                <h6>📋 Detaylı Özel Oran Listesi</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm table-striped">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th>Kart Markası</th>
+                                                <th>SanalPOS ID</th>
+                                                <th>1T (%)</th>
+                                                <th>2T (%)</th>
+                                                <th>3T (%)</th>
+                                                <th>6T (%)</th>
+                                                <th>9T (%)</th>
+                                                <th>12T (%)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var oran in Model.Response.OzelOranBilgileri)
+                                            {
+                                                <tr>
+                                                    <td><strong>@oran.Kredi_Karti_Banka</strong></td>
+                                                    <td><span class="badge bg-secondary">@oran.SanalPOS_ID</span></td>
+                                                    <td>@(oran.MO_01 ?? "-")</td>
+                                                    <td>@(oran.MO_02 ?? "-")</td>
+                                                    <td>@(oran.MO_03 ?? "-")</td>
+                                                    <td>@(oran.MO_06 ?? "-")</td>
+                                                    <td>@(oran.MO_09 ?? "-")</td>
+                                                    <td>@(oran.MO_12 ?? "-")</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle"></i> Response bilgisi alınamadı.
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Raw JSON Response -->
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="mb-0"><i class="fas fa-code"></i> Ham JSON Response</h6>
+                </div>
+                <div class="card-body">
+                    <pre class="bg-dark text-light p-3 rounded"><code>@Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Response, new System.Text.Json.JsonSerializerOptions { WriteIndented = true }))</code></pre>
+                </div>
+            </div>
+
+            <!-- İşlem Geçmişi ve Linkler -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card border-success">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="fas fa-clock"></i> İşlem Bilgileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text small mb-1">
+                                <strong>İşlem Zamanı:</strong><br>
+                                @Model.ProcessTime.ToString("dd.MM.yyyy HH:mm:ss")
+                            </p>
+                            <p class="card-text small mb-0">
+                                <strong>İşlem Süresi:</strong> @Model.ProcessDuration ms
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card border-info">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0"><i class="fas fa-link"></i> İlgili İşlemler</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="@Url.Action("TP_Ozel_Oran_Liste", "Test")" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-redo"></i> Tekrar Test Et
+                                </a>
+                                <a href="@Url.Action("TP_Ozel_Oran_SK_Liste", "Test")" class="btn btn-info btn-sm">
+                                    <i class="fas fa-users"></i> SK Liste
+                                </a>
+                                <a href="@Url.Action("TP_Ozel_Oran_SK_Guncelle", "Test")" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i> SK Güncelle
+                                </a>
+                                <a href="@Url.Action("Index", "Test")" class="btn btn-secondary btn-sm">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

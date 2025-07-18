@@ -1,0 +1,37 @@
+## Visual Studio'nun ürettiği, kişiye özel dosyalar
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+## Derleme çıktıları
+[Bb]in/
+[Oo]bj/
+
+## Build-related files
+*.pdb
+*.dll
+*.exe
+*.lib
+*.so
+*.dylib
+*.nupkg
+*.nuget.props
+*.nuget.targets
+
+## Proje dosyalarıyla ilgili geçici dosyalar
+*.csproj.user
+*.vcxproj.user
+
+## Test sonuçları dosyaları
+TestResults/
+*.trx
+
+## Rider IDE dosyaları
+.idea/
+
+## Diğer
+*.log
+*.tmp
+*.bak

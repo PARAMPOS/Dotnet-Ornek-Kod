@@ -1,0 +1,265 @@
+@model ParamApi.Sample.Mvc.Models.TP_Islem_Odeme_BKM_TestModel
+@{
+    ViewData["Title"] = "TP_Islem_Odeme_BKM Test";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- Sol sidebar - Test menüsü -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-credit-card"></i> Test Menüsü
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item bg-light">
+                        <strong><i class="fas fa-server"></i> TurkPos Servisleri</strong>
+                    </div>
+                    <a href="@Url.Action("TP_WMD_UCD", "Test")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-shield-alt"></i> TP_WMD_UCD
+                        <small class="text-muted d-block">3D Secure Ödeme</small>
+                    </a>
+                    <a href="@Url.Action("TP_Islem_Odeme_OnProv_WMD", "Test")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-clock"></i> TP_Islem_Odeme_OnProv_WMD
+                        <small class="text-muted d-block">Ön Provizyon İşlemi</small>
+                    </a>
+                    <a href="@Url.Action("TP_Islem_Odeme_WD", "Test")" class="list-group-item list-group-item-action">
+                        <i class="fas fa-globe"></i> TP_Islem_Odeme_WD
+                        <small class="text-muted d-block">Dövizli Ödeme</small>
+                    </a>
+                    <a href="@Url.Action("TP_Islem_Odeme_BKM", "Test")" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-mobile-alt"></i> TP_Islem_Odeme_BKM
+                        <small class="text-muted d-block">BKM Express</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- BKM Express Bilgileri -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="card-title mb-0">
+                    <i class="fas fa-mobile-alt"></i> BKM Express
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info p-2 mb-3">
+                    <small>
+                        <strong><i class="fas fa-info-circle"></i> BKM Express Nedir?</strong><br>
+                        Mobil ödeme sistemi ile güvenli ödeme yapmanızı sağlar.
+                    </small>
+                </div>
+                <small class="text-muted">
+                    <strong>Desteklenen Bankalar:</strong><br>
+                    • Akbank<br>
+                    • Garanti BBVA<br>
+                    • İş Bankası<br>
+                    • QNB Finansbank<br>
+                    • VakıfBank<br>
+                    • Yapı Kredi<br>
+                    • Ziraat Bankası<br>
+                    <small class="text-info">ve diğer BKM üye bankaları</small>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-mobile-alt"></i> TP_Islem_Odeme_BKM Test
+                </h4>
+                <p class="card-text mt-2 mb-0">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        BKM Express aracılığı ile mobil ödeme işlemi. Kart numarası gerekmez.
+                    </small>
+                </p>
+            </div>
+            <div class="card-body">
+                <form asp-action="TP_Islem_Odeme_BKM" method="post" id="bkmForm">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="row">
+                        <!-- Müşteri Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-user"></i> Müşteri Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="Customer_Info" class="form-label"></label>
+                                        <input asp-for="Customer_Info" class="form-control" placeholder="John Doe" />
+                                        <span asp-validation-for="Customer_Info" class="text-danger"></span>
+                                        <div class="form-text">Müşteri adı ve soyadı (opsiyonel)</div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Customer_GSM" class="form-label"></label>
+                                        <input asp-for="Customer_GSM" class="form-control" placeholder="5555555555" maxlength="10" />
+                                        <span asp-validation-for="Customer_GSM" class="text-danger"></span>
+                                        <div class="form-text">5 ile başlayan 10 haneli telefon numarası</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sipariş Bilgileri -->
+                        <div class="col-md-6">
+                            <div class="card mb-3">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-shopping-cart"></i> Sipariş Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label asp-for="Order_ID" class="form-label"></label>
+                                        <input asp-for="Order_ID" class="form-control" />
+                                        <span asp-validation-for="Order_ID" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Order_Description" class="form-label"></label>
+                                        <input asp-for="Order_Description" class="form-control" />
+                                        <span asp-validation-for="Order_Description" class="text-danger"></span>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label asp-for="Amount" class="form-label"></label>
+                                        <div class="input-group">
+                                            <input asp-for="Amount" class="form-control" type="number" step="0.01" min="0.01" max="999999.99" />
+                                            <span class="input-group-text">₺</span>
+                                        </div>
+                                        <span asp-validation-for="Amount" class="text-danger"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- URL Bilgileri -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-link"></i> URL Bilgileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label asp-for="Success_URL" class="form-label"></label>
+                                    <input asp-for="Success_URL" class="form-control" type="text" />
+                                    <span asp-validation-for="Success_URL" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Error_URL" class="form-label"></label>
+                                    <input asp-for="Error_URL" class="form-control" type="text" />
+                                    <span asp-validation-for="Error_URL" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label asp-for="IPAddress" class="form-label"></label>
+                                    <input asp-for="IPAddress" class="form-control" type="text" />
+                                    <span asp-validation-for="IPAddress" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6">
+                                    <label asp-for="Referrer_URL" class="form-label"></label>
+                                    <input asp-for="Referrer_URL" class="form-control" type="text" />
+                                    <span asp-validation-for="Referrer_URL" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opsiyonel Alanlar -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-database"></i> Opsiyonel Alanlar</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label asp-for="Transaction_ID" class="form-label"></label>
+                                    <input asp-for="Transaction_ID" class="form-control" placeholder="Otomatik oluşturulacak" />
+                                    <span asp-validation-for="Transaction_ID" class="text-danger"></span>
+                                    <div class="form-text">İşleme ait sipariş ID haricinde tekil ID</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BKM Express Akış Bilgisi -->
+                    <div class="alert alert-warning">
+                        <h6><i class="fas fa-route"></i> BKM Express Akışı</h6>
+                        <ol class="mb-0">
+                            <li><strong>İşlem Başlatma:</strong> Form gönderilir ve BKM Express URL'si alınır</li>
+                            <li><strong>BKM Express:</strong> Kullanıcı BKM Express sayfasına yönlendirilir</li>
+                            <li><strong>Mobil Ödeme:</strong> Kullanıcı telefon ile ödeme yapısını doğrular</li>
+                            <li><strong>Callback:</strong> Sonuç başarılı/hata URL'sine POST edilir</li>
+                        </ol>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="@Url.Action("Index", "Test")" class="btn btn-secondary me-md-2">
+                            <i class="fas fa-arrow-left"></i> Geri
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-mobile-alt"></i> BKM Express Başlat
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        $(document).ready(function() {
+            // GSM numarası formatla
+            $('#Customer_GSM').on('input', function() {
+                var value = $(this).val().replace(/[^0-9]/g, '');
+                if (value.length > 10) {
+                    value = value.substring(0, 10);
+                }
+                $(this).val(value);
+            });
+            
+            // Form submit öncesi validasyon
+            $('#bkmForm').on('submit', function(e) {
+                // GSM numarası kontrolü
+                var gsm = $('#Customer_GSM').val();
+                if (!gsm.match(/^5\d{9}$/)) {
+                    e.preventDefault();
+                    alert('GSM numarası 5 ile başlayan 10 haneli olmalıdır!');
+                    $('#Customer_GSM').focus();
+                    return false;
+                }
+
+                // Tutar kontrolü
+                var amount = parseFloat($('#Amount').val());
+                if (isNaN(amount) || amount <= 0) {
+                    e.preventDefault();
+                    alert('Ödeme tutarı geçerli bir değer olmalıdır!');
+                    $('#Amount').focus();
+                    return false;
+                }
+                
+                // Submit sırasında loading göster
+                var submitBtn = $(this).find('button[type="submit"]');
+                submitBtn.prop('disabled', true);
+                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> İşleniyor...');
+            });
+
+            // Tutar alanına odaklanıldığında seç
+            $('#Amount').on('focus', function() {
+                $(this).select();
+            });
+        });
+    </script>
+} 

@@ -1,0 +1,183 @@
+@model TP_Islem_Sorgulama4_ResultModel
+@{
+    ViewData["Title"] = "TP_Islem_Sorgulama4 Sonuçları";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <!-- Sonuç Durumu -->
+            <div class="card mb-4">
+                <div class="card-header @(Model.IsSuccess ? "bg-success" : "bg-danger") text-white">
+                    <h4 class="mb-0">
+                        <i class="fas @(Model.IsSuccess ? "fa-check-circle" : "fa-times-circle") me-2"></i>
+                        TP_Islem_Sorgulama4 Sonuçları
+                        @if (Model.IsSuccess)
+                        {
+                            <span class="badge bg-light text-success ms-2">Başarılı</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-light text-danger ms-2">Hatalı</span>
+                        }
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <p><strong>İşlem Süresi:</strong> @Model.ProcessDuration ms</p>
+                            <p><strong>İşlem Zamanı:</strong> @Model.ProcessTime.ToString("dd.MM.yyyy HH:mm:ss")</p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <a href="@Url.Action("TP_Islem_Sorgulama4")" class="btn btn-primary">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Yeni Sorgu
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API Response Bilgileri -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        API Yanıt Bilgileri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Sonuç Kodu:</strong> 
+                                <span class="badge @(Model.Response?.Sonuc > 0 ? "bg-success" : "bg-danger")">
+                                    @Model.Response?.Sonuc
+                                </span>
+                            </p>
+                            <p><strong>Sonuç Açıklaması:</strong> @Model.Response?.Sonuc_Str</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Sorgu Kriterleri:</strong></p>
+                            <ul class="small">
+                                @if (!string.IsNullOrWhiteSpace(Model.Request?.Dekont_ID))
+                                {
+                                    <li>Dekont ID: @Model.Request.Dekont_ID</li>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.Request?.Siparis_ID))
+                                {
+                                    <li>Sipariş ID: @Model.Request.Siparis_ID</li>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(Model.Request?.Islem_ID))
+                                {
+                                    <li>İşlem ID: @Model.Request.Islem_ID</li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.Response?.DT_Bilgi?.Any() == true)
+            {
+                <!-- İşlem Detay Bilgileri -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-table me-2"></i>
+                            İşlem Detay Bilgileri
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        @foreach (var bilgi in Model.Response.DT_Bilgi)
+                        {
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>İşlem Bilgileri</h6>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Ödeme Sonucu:</strong> 
+                                                    <span class="badge @(bilgi.Odeme_Sonuc == "1" ? "bg-success" : "bg-danger")">
+                                                        @bilgi.Odeme_Sonuc_Aciklama
+                                                    </span>
+                                                </li>
+                                                <li><strong>Tarih:</strong> @bilgi.Tarih</li>
+                                                <li><strong>Dekont ID:</strong> @bilgi.Dekont_ID</li>
+                                                <li><strong>Sipariş ID:</strong> @bilgi.Siparis_ID</li>
+                                                <li><strong>İşlem ID:</strong> @bilgi.Islem_ID</li>
+                                                <li><strong>Durum:</strong> @bilgi.Durum</li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Tutar Bilgileri</h6>
+                                            <ul class="list-unstyled">
+                                                <li><strong>Toplam Tutar:</strong> 
+                                                    <span class="text-success fw-bold">@bilgi.Toplam_Tutar</span>
+                                                </li>
+                                                <li><strong>Komisyon Oranı:</strong> @bilgi.Komisyon_Oran</li>
+                                                <li><strong>Komisyon Tutarı:</strong> 
+                                                    <span class="text-warning fw-bold">@bilgi.Komisyon_Tutar</span>
+                                                </li>
+                                                <li><strong>Toplam İade Tutarı:</strong> @bilgi.Toplam_Iade_Tutar</li>
+                                                <li><strong>Taksit:</strong> @bilgi.Taksit</li>
+                                                <li><strong>Kart No:</strong> @bilgi.KK_No</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    @if (!string.IsNullOrWhiteSpace(bilgi.Banka_Sonuc_Aciklama))
+                                    {
+                                        <div class="mt-3">
+                                            <h6>Banka Sonuç Açıklaması</h6>
+                                            <p class="alert alert-info mb-0">@bilgi.Banka_Sonuc_Aciklama</p>
+                                        </div>
+                                    }
+                                    
+                                    @if (!string.IsNullOrWhiteSpace(bilgi.Ext_Data))
+                                    {
+                                        <div class="mt-3">
+                                            <h6>Ek Veriler</h6>
+                                            <pre class="bg-light p-2 rounded"><code>@bilgi.Ext_Data</code></pre>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else if (Model.IsSuccess)
+            {
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5>Sorgu Sonucu Bulunamadı</h5>
+                        <p class="text-muted">Belirtilen kriterlere uygun işlem bulunamadı.</p>
+                    </div>
+                </div>
+            }
+
+            @if (!Model.IsSuccess)
+            {
+                <!-- Hata Durumu -->
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Hata Detayları
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger">
+                            <h6>Hata Mesajı:</h6>
+                            <p class="mb-0">@Model.ErrorMessage</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div> 

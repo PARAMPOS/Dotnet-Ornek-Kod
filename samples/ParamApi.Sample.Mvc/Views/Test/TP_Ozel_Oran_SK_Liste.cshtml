@@ -1,0 +1,126 @@
+@model TP_Ozel_Oran_SK_Liste_TestModel
+@{
+    ViewData["Title"] = "TP_Ozel_Oran_SK_Liste - Son Kullanıcı Özel Oran Listesi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-users"></i> TP_Ozel_Oran_SK_Liste - Son Kullanıcı Özel Oran Listesi</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Açıklama -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> İşlem Açıklaması</h6>
+                        <p class="mb-2">Müşterilere gösterilecek özel komisyon oranlarını listeler.</p>
+                        <ul class="mb-0 small">
+                            <li><strong>Metod:</strong> TP_Ozel_Oran_SK_Liste</li>
+                            <li><strong>Parametre:</strong> Yok (parametre almaz)</li>
+                            <li><strong>Dönen Veri:</strong> Son kullanıcı özel oran bilgileri listesi</li>
+                            <li><strong>Kullanım:</strong> Müşteri bazında özel oranları görüntülemek için</li>
+                        </ul>
+                    </div>
+
+                    <!-- Test Formu -->
+                    <form asp-action="TP_Ozel_Oran_SK_Liste" method="post" id="ozelOranSKListeForm">
+                        @Html.AntiForgeryToken()
+
+                        <div class="card border-info">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0"><i class="fas fa-play"></i> Test Parametreleri</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="alert alert-light">
+                                    <i class="fas fa-info-circle text-info"></i>
+                                    Bu servis parametre almaz. Doğrudan çağırılır ve son kullanıcı özel oranlarını döndürür.
+                                </div>
+
+                                <!-- Test Butonu -->
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-info btn-lg">
+                                        <i class="fas fa-play"></i> TP_Ozel_Oran_SK_Liste Çağır
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Beklenen Response Bilgisi -->
+                    <div class="card mt-4 border-secondary">
+                        <div class="card-header bg-secondary text-white">
+                            <h6 class="mb-0"><i class="fas fa-eye"></i> Beklenen Response Yapısı</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-2"><strong>Başarılı Response:</strong></p>
+                            <pre class="bg-light p-3 rounded"><code>{
+  "Sonuc": "1",
+  "Sonuc_Str": "İşlem başarılı",
+  "OzelOranSKBilgileri": [
+    {
+      "Ozel_Oran_SK_ID": "1001",
+      "SanalPOS_ID": "1234",
+      "Kredi_Karti_Banka": "Akbank",
+      "MO_01": "1.25", // Tek çekim
+      "MO_02": "2.50", // 2 taksit
+      "MO_03": "3.75", // 3 taksit
+      "MO_06": "7.50", // 6 taksit
+      "MO_09": "11.25", // 9 taksit
+      "MO_12": "15.00"  // 12 taksit
+    }
+  ]
+}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- Önemli Bilgi -->
+                    <div class="alert alert-warning mt-4">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Önemli Bilgi</h6>
+                        <p class="mb-2">Bu listeden aldığınız <strong>Ozel_Oran_SK_ID</strong> değerlerini TP_Ozel_Oran_SK_Guncelle işleminde kullanabilirsiniz.</p>
+                        <a href="@Url.Action("TP_Ozel_Oran_SK_Guncelle", "Test")" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit"></i> SK Güncelle Sayfasına Git
+                        </a>
+                    </div>
+
+                    <!-- Hızlı Linkler -->
+                    <div class="card mt-4 border-success">
+                        <div class="card-header bg-success text-white">
+                            <h6 class="mb-0"><i class="fas fa-link"></i> İlgili İşlemler</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a href="@Url.Action("TP_Ozel_Oran_Liste", "Test")" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-list"></i> Özel Oran Liste
+                                </a>
+                                <a href="@Url.Action("TP_Ozel_Oran_SK_Guncelle", "Test")" class="btn btn-outline-warning btn-sm">
+                                    <i class="fas fa-edit"></i> SK Güncelle
+                                </a>
+                                <a href="@Url.Action("Index", "Test")" class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-home"></i> Ana Sayfa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Form submit olayını yakala
+            $('#ozelOranSKListeForm').on('submit', function() {
+                $(this).find('button[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> İşlem Devam Ediyor...');
+            });
+        });
+    </script>
+} 

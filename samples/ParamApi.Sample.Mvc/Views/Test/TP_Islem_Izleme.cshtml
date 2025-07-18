@@ -1,0 +1,166 @@
+@model TP_Islem_Izleme_TestModel
+@{
+    ViewData["Title"] = "TP_Islem_Izleme - İşlem İzleme";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-eye me-2"></i>
+                        TP_Islem_Izleme - İşlem İzleme
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-1"></i> Servis Bilgileri</h6>
+                        <ul class="mb-0">
+                            <li><strong>Amaç:</strong> Tarih aralığındaki işlemleri izleme ve raporlama</li>
+                            <li><strong>Metod:</strong> TP_Islem_Izleme</li>
+                            <li><strong>Parametreler:</strong> Tarih aralığı, işlem tipi, işlem durumu</li>
+                            <li><strong>Dönüş:</strong> İşlem listesi ve detayları</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="TP_Islem_Izleme" method="post" id="izlemeForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Tarih_Bas" class="form-label">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Tarih_Bas)
+                                    </label>
+                                    <input asp-for="Tarih_Bas" class="form-control" type="text" 
+                                           placeholder="dd.MM.yyyy HH:mm:ss" />
+                                    <span asp-validation-for="Tarih_Bas" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Tarih_Bit" class="form-label">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Tarih_Bit)
+                                    </label>
+                                    <input asp-for="Tarih_Bit" class="form-control" type="text" 
+                                           placeholder="dd.MM.yyyy HH:mm:ss" />
+                                    <span asp-validation-for="Tarih_Bit" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Islem_Tip" class="form-label">
+                                        <i class="fas fa-tags me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Islem_Tip)
+                                    </label>
+                                    <select asp-for="Islem_Tip" class="form-select">
+                                        @foreach (var tip in TP_Islem_Izleme_TestModel.IslemTipleri)
+                                        {
+                                            <option value="@tip.Value">@tip.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Islem_Durum" class="form-label">
+                                        <i class="fas fa-info-circle me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Islem_Durum)
+                                    </label>
+                                    <select asp-for="Islem_Durum" class="form-select">
+                                        @foreach (var durum in TP_Islem_Izleme_TestModel.IslemDurumlari)
+                                        {
+                                            <option value="@durum.Value">@durum.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hızlı Tarih Seçimi -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Hızlı Tarih Aralığı Seçimi
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    @foreach (var range in TP_Islem_Izleme_TestModel.SampleDateRanges)
+                                    {
+                                        <div class="col-md-3">
+                                            <button type="button" class="btn btn-outline-primary btn-sm w-100 date-range-btn"
+                                                    data-start="@range.TarihBas" data-end="@range.TarihBit">
+                                                @range.Name
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                    <i class="fas fa-search me-2"></i>
+                                    İşlemleri İzle
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="resetForm()">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Hızlı tarih seçimi
+            $('.date-range-btn').click(function() {
+                const startDate = $(this).data('start');
+                const endDate = $(this).data('end');
+                
+                $('#Tarih_Bas').val(startDate);
+                $('#Tarih_Bit').val(endDate);
+                
+                $('.date-range-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+                $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+            });
+
+            // Form validasyonu
+            $('#izlemeForm').on('submit', function(e) {
+                const tarihBas = $('#Tarih_Bas').val().trim();
+                const tarihBit = $('#Tarih_Bit').val().trim();
+                
+                if (!tarihBas || !tarihBit) {
+                    e.preventDefault();
+                    alert('Lütfen başlangıç ve bitiş tarihlerini giriniz.');
+                    return false;
+                }
+                
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>İzleniyor...');
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('izlemeForm').reset();
+            $('.date-range-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+        }
+    </script>
+} 

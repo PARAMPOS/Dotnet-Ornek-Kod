@@ -1,0 +1,331 @@
+@model ParamApi.Sample.Mvc.Models.KS_Kart_Ekle_TestModel
+@{
+    ViewData["Title"] = "KS_Kart_Ekle Test";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-save"></i>
+                        KS_Kart_Ekle - Kredi Kartı Saklama Testi
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Bilgi:</strong> Bu test ile kredi kartı bilgilerini güvenli olarak saklayabilirsiniz. 
+                        Saklanan kart daha sonra KS_Tahsilat ile ödeme almak için kullanılabilir.
+                    </div>
+
+                    <form asp-action="KS_Kart_Ekle" method="post" id="kartEkleForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KK_Sahibi" class="form-label">
+                                        <i class="fas fa-user"></i> Kart Sahibi
+                                    </label>
+                                    <input asp-for="KK_Sahibi" class="form-control" placeholder="JOHN DOE" />
+                                    <span asp-validation-for="KK_Sahibi" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KK_Kart_Adi" class="form-label">
+                                        <i class="fas fa-tag"></i> Kart Adı (Opsiyonel)
+                                    </label>
+                                    <input asp-for="KK_Kart_Adi" class="form-control" placeholder="Test Kartı" />
+                                    <span asp-validation-for="KK_Kart_Adi" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KK_No" class="form-label">
+                                        <i class="fas fa-credit-card"></i> Kart Numarası
+                                    </label>
+                                    <input asp-for="KK_No" class="form-control" placeholder="1234 5678 9012 3456" maxlength="19" id="kartNumarasi" />
+                                    <span asp-validation-for="KK_No" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KK_SK_Ay" class="form-label">
+                                        <i class="fas fa-calendar"></i> Son Kullanma Ay
+                                    </label>
+                                    <select asp-for="KK_SK_Ay" class="form-select">
+                                        <option value="01">01 - Ocak</option>
+                                        <option value="02">02 - Şubat</option>
+                                        <option value="03">03 - Mart</option>
+                                        <option value="04">04 - Nisan</option>
+                                        <option value="05">05 - Mayıs</option>
+                                        <option value="06">06 - Haziran</option>
+                                        <option value="07">07 - Temmuz</option>
+                                        <option value="08">08 - Ağustos</option>
+                                        <option value="09">09 - Eylül</option>
+                                        <option value="10">10 - Ekim</option>
+                                        <option value="11">11 - Kasım</option>
+                                        <option value="12" selected>12 - Aralık</option>
+                                    </select>
+                                    <span asp-validation-for="KK_SK_Ay" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KK_SK_Yil" class="form-label">
+                                        <i class="fas fa-calendar"></i> Son Kullanma Yıl
+                                    </label>
+                                    <input asp-for="KK_SK_Yil" class="form-control" type="number" min="2024" max="2040" placeholder="2030" maxlength="4" />
+                                    <span asp-validation-for="KK_SK_Yil" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KK_Islem_ID" class="form-label">
+                                        <i class="fas fa-hashtag"></i> İşlem ID (Opsiyonel)
+                                    </label>
+                                    <input asp-for="KK_Islem_ID" class="form-control" placeholder="Otomatik oluşturulacak" />
+                                    <span asp-validation-for="KK_Islem_ID" class="text-danger"></span>
+                                    <div class="form-text">Boş bırakılırsa otomatik oluşturulur</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-secondary" onclick="fillTestData()">
+                                <i class="fas fa-magic"></i> Test Verisi Doldur
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Kartı Sakla
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-lightbulb"></i> Test Kartları
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div id="testCards">
+                        <div class="text-center">
+                            <div class="spinner-border spinner-border-sm" role="status">
+                                <span class="visually-hidden">Test kartları yükleniyor...</span>
+                            </div>
+                            <p class="mt-2 mb-0 text-muted">Test kartları yükleniyor...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Önemli Notlar
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li><i class="fas fa-check text-success"></i> Kart bilgileri güvenli olarak saklanır</li>
+                        <li><i class="fas fa-check text-success"></i> Saklanan kart KS_Tahsilat ile kullanılabilir</li>
+                        <li><i class="fas fa-check text-success"></i> Başarılı işlemde KS_GUID döner</li>
+                        <li><i class="fas fa-info-circle text-info"></i> Test ortamında gerçek para çekilmez</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Test kartlarını yükle
+            loadTestCards();
+            
+            // Kart numarası formatla
+            $('#kartNumarasi').on('input', function() {
+                var value = $(this).val().replace(/\s/g, '').replace(/[^0-9]/gi, '');
+                var formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+                if (formattedValue.length > 19) {
+                    formattedValue = formattedValue.substring(0, 19);
+                }
+                $(this).val(formattedValue);
+            });
+
+            // Yıl input'u için özel kontroller
+            $('#KK_SK_Yil').on('input', function() {
+                var value = $(this).val();
+                if (value.length > 4) {
+                    $(this).val(value.substring(0, 4));
+                }
+                
+                // Sadece sayı girişine izin ver
+                var numericValue = value.replace(/[^0-9]/g, '');
+                if (numericValue !== value) {
+                    $(this).val(numericValue);
+                }
+            });
+
+            // Form submit öncesi kart numarasını temizle
+            $('#kartEkleForm').on('submit', function() {
+                var kartNo = $('#kartNumarasi').val().replace(/\s/g, '');
+                $('#kartNumarasi').val(kartNo);
+                
+                // Yıl validation kontrolü
+                var yil = $('#KK_SK_Yil').val();
+                if (yil && yil.length !== 4) {
+                    alert('Yıl 4 haneli olmalıdır!');
+                    $('#KK_SK_Yil').focus();
+                    return false;
+                }
+                
+                var yilNumara = parseInt(yil);
+                if (yilNumara < 2024 || yilNumara > 2040) {
+                    alert('Yıl 2024-2040 arasında olmalıdır!');
+                    $('#KK_SK_Yil').focus();
+                    return false;
+                }
+            });
+        });
+
+        function loadTestCards() {
+            $.get('/Test/GetTestCards')
+                .done(function(data) {
+                    var html = '';
+                    
+                    if (data && data.length > 0) {
+                        // Başarılı kartlar
+                        var successCards = data.filter(card => card.isSuccess);
+                        if (successCards.length > 0) {
+                            html += '<div class="mb-3">';
+                            html += '<h6 class="text-success"><i class="fas fa-check-circle"></i> Başarılı Test Kartları</h6>';
+                            successCards.forEach(function(card) {
+                                html += '<div class="card mb-2 border-success">';
+                                html += '<div class="card-body p-2">';
+                                html += '<div class="d-flex justify-content-between align-items-center">';
+                                html += '<div>';
+                                html += '<small class="fw-bold">' + card.description + '</small><br>';
+                                html += '<small class="text-muted">' + card.cardNumber + '</small>';
+                                html += '</div>';
+                                html += '<button class="btn btn-sm btn-outline-success" onclick="selectTestCard(\'' + 
+                                    card.cardNumber + '\', \'' + card.expiryMonth + '\', \'' + card.expiryYear + '\', \'' + card.cardHolder + '\')">';
+                                html += '<i class="fas fa-arrow-right"></i>';
+                                html += '</button>';
+                                html += '</div>';
+                                html += '</div>';
+                                html += '</div>';
+                            });
+                            html += '</div>';
+                        }
+                        
+                        // Başarısız kartlar
+                        var failCards = data.filter(card => !card.isSuccess);
+                        if (failCards.length > 0) {
+                            html += '<div>';
+                            html += '<h6 class="text-danger"><i class="fas fa-times-circle"></i> Başarısız Test Kartları</h6>';
+                            failCards.forEach(function(card) {
+                                html += '<div class="card mb-2 border-danger">';
+                                html += '<div class="card-body p-2">';
+                                html += '<div class="d-flex justify-content-between align-items-center">';
+                                html += '<div>';
+                                html += '<small class="fw-bold">' + card.description + '</small><br>';
+                                html += '<small class="text-muted">' + card.cardNumber + '</small>';
+                                html += '</div>';
+                                html += '<button class="btn btn-sm btn-outline-danger" onclick="selectTestCard(\'' + 
+                                    card.cardNumber + '\', \'' + card.expiryMonth + '\', \'' + card.expiryYear + '\', \'' + card.cardHolder + '\')">';
+                                html += '<i class="fas fa-arrow-right"></i>';
+                                html += '</button>';
+                                html += '</div>';
+                                html += '</div>';
+                                html += '</div>';
+                            });
+                            html += '</div>';
+                        }
+                    } else {
+                        html = '<div class="alert alert-warning">Test kartları yüklenemedi.</div>';
+                    }
+                    
+                    $('#testCards').html(html);
+                })
+                .fail(function() {
+                    $('#testCards').html('<div class="alert alert-danger">Test kartları yüklenirken hata oluştu.</div>');
+                });
+        }
+
+        function selectTestCard(cardNumber, expiryMonth, expiryYear, cardHolder) {
+            // Kart bilgilerini doldur
+            $('#KK_No').val(cardNumber.replace(/(.{4})/g, '$1 ').trim());
+            $('#KK_SK_Ay').val(expiryMonth.padStart(2, '0')); // Ay'ı 2 haneli yap
+            $('#KK_SK_Yil').val(expiryYear.toString()); // Yıl'ı string olarak set et
+            $('#KK_Sahibi').val(cardHolder);
+            
+            // Toast bildirimi göster
+            showToast('Test kartı seçildi: ' + cardNumber, 'success');
+        }
+
+        function fillTestData() {
+            // Varsayılan test verisi doldur
+            $('#KK_Sahibi').val('JOHN DOE');
+            $('#KK_No').val('4355 0844 4000 0005');
+            $('#KK_SK_Ay').val('12');
+            $('#KK_SK_Yil').val('2030'); // String olarak set ediliyor
+            $('#KK_Kart_Adi').val('Test Kartı');
+            $('#KK_Islem_ID').val('KART_EKLE_' + new Date().getTime());
+            
+            showToast('Test verisi dolduruldu', 'info');
+        }
+
+        function showToast(message, type = 'info') {
+            var bgClass = type === 'success' ? 'bg-success' : type === 'danger' ? 'bg-danger' : 'bg-info';
+            var toast = `
+                <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            var toastContainer = $('#toast-container');
+            if (toastContainer.length === 0) {
+                $('body').append('<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>');
+                toastContainer = $('#toast-container');
+            }
+            
+            var toastElement = $(toast);
+            toastContainer.append(toastElement);
+            
+            var bsToast = new bootstrap.Toast(toastElement[0]);
+            bsToast.show();
+            
+            toastElement.on('hidden.bs.toast', function() {
+                $(this).remove();
+            });
+        }
+    </script>
+    
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

@@ -1,0 +1,177 @@
+@model TP_Mutabakat_Detay_TestModel
+@{
+    ViewData["Title"] = "TP_Mutabakat_Detay - Mutabakat Detay Sorgulama";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-list-alt me-2"></i>
+                        TP_Mutabakat_Detay - Mutabakat Detay Sorgulama
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-1"></i> Servis Bilgileri</h6>
+                        <ul class="mb-0">
+                            <li><strong>Amaç:</strong> Belirli tarihteki işlem detaylarını görüntüleme</li>
+                            <li><strong>Metod:</strong> TP_Mutabakat_Detay</li>
+                            <li><strong>Parametreler:</strong> GUID (otomatik), İşlem Tarihi</li>
+                            <li><strong>Dönüş:</strong> Detaylı mutabakat bilgileri (işlem detayları, tutarlar)</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="TP_Mutabakat_Detay" method="post" id="mutabakatDetayForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Tarih" class="form-label">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Tarih)
+                                    </label>
+                                    <input asp-for="Tarih" class="form-control" type="text" 
+                                           placeholder="dd.MM.yyyy HH:mm:ss" 
+                                           title="Örnek: 20.11.2023 00:00:16" />
+                                    <span asp-validation-for="Tarih" class="text-danger"></span>
+                                    <div class="form-text">Mutabakat detayının sorgulanacağı tarih</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hızlı Tarih Seçimi -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Hızlı Tarih Seçimi
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    @foreach (var date in TP_Mutabakat_Detay_TestModel.SampleDates)
+                                    {
+                                        <div class="col-md-3 col-lg-2">
+                                            <button type="button" class="btn btn-outline-primary btn-sm w-100 date-btn"
+                                                    data-date="@date.Tarih">
+                                                @date.Name
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                    <i class="fas fa-search me-2"></i>
+                                    Mutabakat Detay Sorgula
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="resetForm()">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Kullanım Bilgileri -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-question-circle me-1"></i>
+                        Kullanım Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>📋 Parametreler</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Tarih:</strong> Detay sorgulanacak tarih</li>
+                                <li><strong>GUID:</strong> Otomatik eklenir</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>📊 Dönüş Bilgileri</h6>
+                            <ul class="list-unstyled">
+                                <li>• İşlem detayları</li>
+                                <li>• Dekont bilgileri</li>
+                                <li>• Tutar detayları</li>
+                                <li>• Komisyon bilgileri</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Hızlı tarih seçimi
+            $('.date-btn').click(function() {
+                const date = $(this).data('date');
+                $('#Tarih').val(date);
+                
+                // Aktif buton stilini güncelle
+                $('.date-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+                $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+            });
+
+            // Form validasyonu
+            $('#mutabakatDetayForm').on('submit', function(e) {
+                const tarih = $('#Tarih').val().trim();
+                
+                if (!tarih) {
+                    e.preventDefault();
+                    alert('Lütfen tarih giriniz.');
+                    return false;
+                }
+                
+                // Tarih format kontrolü
+                const dateRegex = /^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}$/;
+                if (!dateRegex.test(tarih)) {
+                    e.preventDefault();
+                    alert('Tarih formatı: dd.MM.yyyy HH:mm:ss olmalıdır.\nÖrnek: 20.11.2023 00:00:16');
+                    return false;
+                }
+                
+                // Submit butonunu deaktive et
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Sorgulanıyor...');
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('mutabakatDetayForm').reset();
+            $('.date-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+            
+            // Default değeri geri yükle
+            const now = new Date();
+            $('#Tarih').val(formatDate(now));
+        }
+
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+        }
+    </script>
+} 

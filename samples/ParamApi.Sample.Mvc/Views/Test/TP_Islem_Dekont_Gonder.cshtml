@@ -1,0 +1,160 @@
+@model TP_Islem_Dekont_Gonder_TestModel
+@{
+    ViewData["Title"] = "TP_Islem_Dekont_Gonder - Dekont E-posta Gönderimi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-envelope me-2"></i>
+                        TP_Islem_Dekont_Gonder - Dekont E-posta Gönderimi
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-1"></i> Servis Bilgileri</h6>
+                        <ul class="mb-0">
+                            <li><strong>Amaç:</strong> İşlem dekontunu e-posta olarak gönderme</li>
+                            <li><strong>Metod:</strong> TP_Islem_Dekont_Gonder</li>
+                            <li><strong>Parametreler:</strong> Dekont ID, E-posta (opsiyonel)</li>
+                            <li><strong>Dönüş:</strong> Gönderim durumu</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="TP_Islem_Dekont_Gonder" method="post" id="dekontForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Dekont_ID" class="form-label">
+                                        <i class="fas fa-receipt me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Dekont_ID)
+                                    </label>
+                                    <input asp-for="Dekont_ID" class="form-control" placeholder="123456789" />
+                                    <span asp-validation-for="Dekont_ID" class="text-danger"></span>
+                                    <div class="form-text">İşlemin dekont ID'si</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="E_Posta" class="form-label">
+                                        <i class="fas fa-at me-1"></i>
+                                        @Html.DisplayNameFor(m => m.E_Posta)
+                                    </label>
+                                    <input asp-for="E_Posta" class="form-control" type="email" placeholder="test@example.com" />
+                                    <span asp-validation-for="E_Posta" class="text-danger"></span>
+                                    <div class="form-text">Boş bırakılırsa işyeri e-postasına gönderilir</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Örnek Değerler -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-clipboard-list me-1"></i>
+                                    Örnek Değerler
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Dekont ID'leri:</h6>
+                                        <div class="row g-2">
+                                            @foreach (var decontId in TP_Islem_Dekont_Gonder_TestModel.SampleDecontIds)
+                                            {
+                                                <div class="col-6">
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm w-100 dekont-btn"
+                                                            data-value="@decontId">
+                                                        @decontId
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>E-posta Adresleri:</h6>
+                                        <div class="row g-2">
+                                            @foreach (var email in TP_Islem_Dekont_Gonder_TestModel.SampleEmails)
+                                            {
+                                                <div class="col-12">
+                                                    <button type="button" class="btn btn-outline-info btn-sm w-100 email-btn"
+                                                            data-value="@email">
+                                                        @email
+                                                    </button>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Dekont Gönder
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="resetForm()">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Dekont ID seçimi
+            $('.dekont-btn').click(function() {
+                const value = $(this).data('value');
+                $('#Dekont_ID').val(value);
+                
+                $('.dekont-btn').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $(this).removeClass('btn-outline-secondary').addClass('btn-secondary');
+            });
+
+            // E-posta seçimi
+            $('.email-btn').click(function() {
+                const value = $(this).data('value');
+                $('#E_Posta').val(value);
+                
+                $('.email-btn').removeClass('btn-info').addClass('btn-outline-info');
+                $(this).removeClass('btn-outline-info').addClass('btn-info');
+            });
+
+            // Form validasyonu
+            $('#dekontForm').on('submit', function(e) {
+                const decontId = $('#Dekont_ID').val().trim();
+                
+                if (!decontId) {
+                    e.preventDefault();
+                    alert('Lütfen Dekont ID giriniz.');
+                    return false;
+                }
+                
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Gönderiliyor...');
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('dekontForm').reset();
+            $('.dekont-btn').removeClass('btn-secondary').addClass('btn-outline-secondary');
+            $('.email-btn').removeClass('btn-info').addClass('btn-outline-info');
+        }
+    </script>
+} 

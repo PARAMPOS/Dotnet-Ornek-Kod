@@ -1,0 +1,278 @@
+<!-- Global 3D Secure Modal -->
+<div class="modal fade" id="threeDModal" tabindex="-1" aria-labelledby="threeDModalLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="threeDModalLabel">
+                    <i class="fas fa-shield-alt"></i> 3D Secure Doğrulama
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" onclick="confirmClose3D()"></button>
+            </div>
+            <div class="modal-body p-0">
+                <!-- İşlem Bilgileri -->
+                <div class="bg-light p-3 border-bottom">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <small class="text-muted">Sipariş ID:</small>
+                            <div class="fw-bold" id="threeDOrderId">-</div>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">İşlem Tutarı:</small>
+                            <div class="fw-bold" id="threeDAmount">-</div>
+                        </div>
+                        <div class="col-md-4">
+                            <small class="text-muted">Durum:</small>
+                            <div class="fw-bold" id="threeDStatus">
+                                <span class="badge bg-warning">Doğrulama Bekleniyor</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loading Spinner -->
+                <div id="threeDLoading" class="text-center p-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">3D Secure sayfası yükleniyor...</span>
+                    </div>
+                    <p class="mt-3 text-muted">Banka 3D Secure sayfası yükleniyor...</p>
+                </div>
+
+                <!-- 3D Secure Iframe -->
+                <div id="threeDContainer" style="display: none;">
+                    <iframe id="threeDFrame" name="threeDFrame" style="width: 100%; min-height: 500px; border: none;"></iframe>
+                </div>
+
+                <!-- Error Container -->
+                <div id="threeDError" style="display: none;" class="p-4">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Hata:</strong> <span id="threeDErrorMessage"></span>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times"></i> Kapat
+                        </button>
+                        <button type="button" class="btn btn-primary" onclick="retry3DProcess()">
+                            <i class="fas fa-redo"></i> Tekrar Dene
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer bg-light">
+                <div class="d-flex justify-content-between w-100">
+                    <div>
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i>
+                            Güvenlik nedeniyle bu pencereyi kapatmayın
+                        </small>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="confirmClose3D()">
+                            <i class="fas fa-times"></i> İptal Et
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global 3D Secure Modal Functions
+var threeDModal;
+var currentPaymentData = {};
+
+// 3D Modal'ı başlat
+function initThreeDModal() {
+    threeDModal = new bootstrap.Modal(document.getElementById('threeDModal'));
+}
+
+// 3D işlemini başlat
+function start3DProcess(htmlContent, orderData) {
+    if (!threeDModal) {
+        initThreeDModal();
+    }
+    
+    // İşlem bilgilerini kaydet
+    currentPaymentData = orderData || {};
+    
+    // Modal bilgilerini güncelle
+    $('#threeDOrderId').text(currentPaymentData.orderId || '-');
+    $('#threeDAmount').text(currentPaymentData.amount || '-');
+    $('#threeDStatus').html('<span class="badge bg-warning">Doğrulama Bekleniyor</span>');
+    
+    // Modal'ı göster
+    threeDModal.show();
+    
+    // Loading göster
+    $('#threeDLoading').show();
+    $('#threeDContainer').hide();
+    $('#threeDError').hide();
+    
+    // HTML içeriğini yükle
+    if (htmlContent && htmlContent.trim() !== '' && htmlContent !== 'NONSECURE') {
+        setTimeout(function() {
+            load3DContent(htmlContent);
+        }, 1000);
+    } else {
+        show3DError('3D Secure HTML içeriği geçersiz veya NonSecure işlem.');
+    }
+}
+
+// 3D HTML içeriğini iframe'e yükle
+function load3DContent(htmlContent) {
+    try {
+        // HTML içeriğindeki özel karakterleri güvenli şekilde decode et
+        var decodedHtml = safeDecodeHtml(htmlContent);
+        
+        // Iframe'e içeriği blob URL ile güvenli yükle
+        var iframe = document.getElementById('threeDFrame');
+        
+        // Blob URL oluştur
+        var blob = new Blob([decodedHtml], { type: 'text/html; charset=utf-8' });
+        var blobUrl = URL.createObjectURL(blob);
+        
+        // Iframe'e blob URL'yi yükle
+        iframe.src = blobUrl;
+        
+        // Loading'i gizle, iframe'i göster
+        $('#threeDLoading').hide();
+        $('#threeDContainer').show();
+        
+        // Iframe yüklendiğinde
+        iframe.onload = function() {
+            try {
+                // Blob URL'yi temizle
+                URL.revokeObjectURL(blobUrl);
+                
+                // Boyut ayarlama
+                setTimeout(function() {
+                    try {
+                        var iframeHeight = iframe.contentWindow.document.body.scrollHeight;
+                        if (iframeHeight > 300) {
+                            iframe.style.height = Math.min(iframeHeight + 50, 600) + 'px';
+                        }
+                    } catch (e) {
+                        iframe.style.height = '500px';
+                    }
+                }, 500);
+                
+            } catch (e) {
+                console.log('Iframe load handler error:', e);
+                iframe.style.height = '500px';
+            }
+        };
+        
+        // Hata durumu için timeout
+        setTimeout(function() {
+            if (iframe.src === blobUrl) {
+                console.log('3D content loaded successfully');
+            }
+        }, 3000);
+        
+    } catch (error) {
+        console.error('3D Content Load Error:', error);
+        show3DError('3D Secure içeriği yüklenirken hata oluştu: ' + error.message);
+    }
+}
+
+// 3D form submit'ini dinle
+function listen3DFormSubmit(iframe) {
+    try {
+        // Iframe içindeki form submit'lerini yakala
+        iframe.onload = function() {
+            try {
+                var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                var forms = iframeDoc.getElementsByTagName('form');
+                
+                for (var i = 0; i < forms.length; i++) {
+                    forms[i].addEventListener('submit', function(e) {
+                        $('#threeDStatus').html('<span class="badge bg-info">İşlem Gönderiliyor...</span>');
+                        
+                        // Form submit sonrası callback'i bekle
+                        setTimeout(function() {
+                            check3DCallback();
+                        }, 2000);
+                    });
+                }
+            } catch (e) {
+                console.log('3D Form listener setup failed:', e);
+            }
+        };
+    } catch (error) {
+        console.error('3D Form Listen Error:', error);
+    }
+}
+
+// 3D callback'i kontrol et
+function check3DCallback() {
+    // Bu fonksiyon success/error sayfalarından çağrılacak
+    $('#threeDStatus').html('<span class="badge bg-success">Doğrulama Tamamlandı</span>');
+}
+
+// 3D hatası göster
+function show3DError(message) {
+    $('#threeDLoading').hide();
+    $('#threeDContainer').hide();
+    $('#threeDError').show();
+    $('#threeDErrorMessage').text(message);
+    $('#threeDStatus').html('<span class="badge bg-danger">Hata</span>');
+}
+
+// 3D işlemini tekrar dene
+function retry3DProcess() {
+    if (currentPaymentData.retryFunction) {
+        threeDModal.hide();
+        currentPaymentData.retryFunction();
+    } else {
+        location.reload();
+    }
+}
+
+// 3D modal kapatma onayı
+function confirmClose3D() {
+    if (confirm('3D Secure işlemi devam ediyor. İptal etmek istediğinizden emin misiniz?')) {
+        threeDModal.hide();
+        // İsteğe bağlı: Ana sayfaya yönlendir
+        if (currentPaymentData.cancelUrl) {
+            window.location.href = currentPaymentData.cancelUrl;
+        }
+    }
+}
+
+// Güvenli HTML decode
+function safeDecodeHtml(htmlString) {
+    try {
+        // Temel HTML entity'leri decode et
+        var decodedString = htmlString
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&quot;/g, '"')
+            .replace(/&#x27;/g, "'")
+            .replace(/&#x2F;/g, '/')
+            .replace(/&amp;/g, '&'); // En son &amp; decode et
+        
+        return decodedString;
+    } catch (error) {
+        console.error('HTML decode error:', error);
+        return htmlString; // Hata durumunda orijinal string'i döndür
+    }
+}
+
+// Legacy HTML entities decode (fallback)
+function decodeHtmlEntities(str) {
+    try {
+        var element = document.createElement('div');
+        element.innerHTML = str;
+        return element.textContent || element.innerText || '';
+    } catch (error) {
+        console.error('HTML entities decode error:', error);
+        return str;
+    }
+}
+
+// Sayfa yüklendiğinde modal'ı hazırla
+$(document).ready(function() {
+    initThreeDModal();
+});
+</script> 

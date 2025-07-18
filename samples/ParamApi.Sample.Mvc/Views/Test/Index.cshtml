@@ -1,0 +1,192 @@
+@{
+    ViewData["Title"] = "Param API Test Merkezi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+    
+    <div class="col-md-9">
+        <!-- Ana içerik alanı -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-home"></i> Param API Test Merkezi
+                </h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="alert alert-info">
+                            <h5><i class="fas fa-info-circle"></i> Hoş Geldiniz!</h5>
+                            <p class="mb-0">
+                                Bu test merkezi, Param API SDK'nızın tüm özelliklerini test etmenizi sağlar. 
+                                Sol menüden test etmek istediğiniz servisi seçin ve işlemlerinizi gerçekleştirin.
+                            </p>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-shield-alt fa-3x text-primary mb-3"></i>
+                                        <h5>3D Secure Ödeme</h5>
+                                        <p class="text-muted">TP_WMD_UCD servisi ile güvenli ödeme işlemleri</p>
+                                        <a href="@Url.Action("TP_WMD_UCD", "Test")" class="btn btn-primary">
+                                            <i class="fas fa-play"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-save fa-3x text-success mb-3"></i>
+                                        <h5>Kart Saklama</h5>
+                                        <p class="text-muted">Kart bilgilerini güvenli şekilde saklama</p>
+                                        <a href="@Url.Action("KS_Kart_Ekle", "Test")" class="btn btn-success">
+                                            <i class="fas fa-play"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card border-info">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-mobile-alt fa-3x text-info mb-3"></i>
+                                        <h5>BKM Express</h5>
+                                        <p class="text-muted">Mobil ödeme sistemi ile hızlı ödeme</p>
+                                        <a href="@Url.Action("TP_Islem_Odeme_BKM", "Test")" class="btn btn-info">
+                                            <i class="fas fa-play"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-secondary">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-globe fa-3x text-secondary mb-3"></i>
+                                        <h5>Dövizli Ödeme</h5>
+                                        <p class="text-muted">Yabancı kartlar ile dövizli ödeme</p>
+                                        <a href="@Url.Action("TP_Islem_Odeme_WD", "Test")" class="btn btn-secondary">
+                                            <i class="fas fa-play"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card border-warning">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-ban fa-3x text-warning mb-3"></i>
+                                        <h5>İptal/İade İşlemleri</h5>
+                                        <p class="text-muted">Ödeme işlemlerini kısmen veya tamamen iptal/iade</p>
+                                        <a href="@Url.Action("TP_Islem_Iptal_Iade_Kismi2", "Test")" class="btn btn-warning">
+                                            <i class="fas fa-play"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-percentage fa-3x text-success mb-3"></i>
+                                        <h5>Özel Oran Yönetimi</h5>
+                                        <p class="text-muted">Komisyon oranlarını listele ve güncelle</p>
+                                        <a href="@Url.Action("TP_Ozel_Oran", "Test")" class="btn btn-success">
+                                            <i class="fas fa-play"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-chart-bar fa-3x text-primary mb-3"></i>
+                                        <h5>Mutabakat Sorgulama</h5>
+                                        <p class="text-muted">Mutabakat özet ve detay sorgulaması</p>
+                                        <div class="d-grid gap-2">
+                                            <a href="@Url.Action("TP_Mutabakat_Ozet", "Test")" class="btn btn-primary btn-sm">
+                                                <i class="fas fa-chart-bar"></i> Özet Sorgula
+                                            </a>
+                                            <a href="@Url.Action("TP_Mutabakat_Detay", "Test")" class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-list-alt"></i> Detay Sorgula
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-dark">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-search fa-3x text-dark mb-3"></i>
+                                        <h5>İşlem İzleme/Sorgulama</h5>
+                                        <p class="text-muted">İşlem durumu sorgulama ve izleme</p>
+                                        <div class="d-grid gap-2">
+                                            <a href="@Url.Action("TP_Islem_Sorgulama4", "Test")" class="btn btn-dark btn-sm">
+                                                <i class="fas fa-search"></i> İşlem Sorgula
+                                            </a>
+                                            <a href="@Url.Action("TP_Islem_Izleme", "Test")" class="btn btn-outline-dark btn-sm">
+                                                <i class="fas fa-eye"></i> İşlem İzle
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card border-secondary">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-envelope fa-3x text-secondary mb-3"></i>
+                                        <h5>Dekont E-posta Gönderimi</h5>
+                                        <p class="text-muted">İşlem dekontunu e-posta ile gönderme</p>
+                                        <a href="@Url.Action("TP_Islem_Dekont_Gonder", "Test")" class="btn btn-secondary">
+                                            <i class="fas fa-paper-plane"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-credit-card fa-3x text-success mb-3"></i>
+                                        <h5>BIN Sorgulama</h5>
+                                        <p class="text-muted">Kredi kartı BIN bilgilerini sorgulama</p>
+                                        <a href="@Url.Action("BIN_SanalPos", "Test")" class="btn btn-success">
+                                            <i class="fas fa-search-dollar"></i> Test Et
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Aktif menü öğesini vurgula
+        $(document).ready(function() {
+            $('.list-group-item-action').on('click', function() {
+                $('.list-group-item-action').removeClass('active');
+                $(this).addClass('active');
+            });
+        });
+    </script>
+} 

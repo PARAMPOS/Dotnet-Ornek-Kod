@@ -1,0 +1,284 @@
+@{
+    ViewData["Title"] = "TP_Islem_Odeme_WD - 3D Secure Başarılı";
+    
+    // TempData'dan callback verilerini al
+    var callbackJson = TempData["TP_Islem_Odeme_WD_Callback"] as string;
+    ParamApi.Sample.Mvc.Models.TP_Islem_Odeme_WD_CallbackModel? callbackModel = null;
+    
+    if (!string.IsNullOrEmpty(callbackJson))
+    {
+        try
+        {
+            callbackModel = System.Text.Json.JsonSerializer.Deserialize<ParamApi.Sample.Mvc.Models.TP_Islem_Odeme_WD_CallbackModel>(callbackJson);
+        }
+        catch
+        {
+            // Deserialize hatası
+        }
+    }
+    
+    var allParameters = ViewBag.Parameters as Dictionary<string, string> ?? new Dictionary<string, string>();
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-globe"></i> TP_Islem_Odeme_WD - 3D Secure Sonucu
+                </h4>
+                <p class="card-text mt-2 mb-0">
+                    <small class="text-muted">
+                        3D Secure doğrulama tamamlandı - @DateTime.Now.ToString("dd.MM.yyyy HH:mm:ss")
+                    </small>
+                </p>
+            </div>
+            
+            <div class="card-body">
+                @if (callbackModel?.TURKPOS_RETVAL_Sonuc == "1")
+                {
+                    <!-- Başarılı İşlem -->
+                    <div class="alert alert-success" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-check-circle"></i> Dövizli Ödeme Başarıyla Tamamlandı!
+                        </h5>
+                        <p class="mb-2">
+                            3D Secure doğrulama başarılı. Dövizli ödeme işlemi tamamlandı.
+                        </p>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Dekont ID:</strong> <code>@callbackModel.TURKPOS_RETVAL_Dekont_ID</code></p>
+                                <p class="mb-1"><strong>İşlem ID:</strong> <code>@callbackModel.TURKPOS_RETVAL_Islem_ID</code></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Tahsilat Tutarı:</strong> @callbackModel.TURKPOS_RETVAL_Tahsilat_Tutari</p>
+                                <p class="mb-1"><strong>Net Tutar:</strong> @callbackModel.TURKPOS_RETVAL_Odeme_Tutari</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <!-- Başarısız İşlem -->
+                    <div class="alert alert-danger" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle"></i> Dövizli Ödeme Başarısız!
+                        </h5>
+                        <p class="mb-0">
+                            @if (callbackModel != null)
+                            {
+                                <text>@callbackModel.TURKPOS_RETVAL_Sonuc_Str</text>
+                            }
+                            else
+                            {
+                                <text>3D Secure doğrulama sırasında hata oluştu.</text>
+                            }
+                        </p>
+                    </div>
+                }
+
+                <!-- Callback Parametreleri -->
+                @if (callbackModel != null)
+                {
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-receipt"></i> İşlem Detayları</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th>Sonuç Kodu:</th>
+                                                <td>
+                                                    <span class="badge bg-@(callbackModel.TURKPOS_RETVAL_Sonuc == "1" ? "success" : "danger")">
+                                                        @callbackModel.TURKPOS_RETVAL_Sonuc
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <th>Sonuç Açıklama:</th>
+                                                <td>@callbackModel.TURKPOS_RETVAL_Sonuc_Str</td>
+                                            </tr>
+                                            <tr>
+                                                <th>İşlem Tarihi:</th>
+                                                <td>@callbackModel.TURKPOS_RETVAL_Islem_Tarih</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Dekont ID:</th>
+                                                <td><code>@callbackModel.TURKPOS_RETVAL_Dekont_ID</code></td>
+                                            </tr>
+                                            <tr>
+                                                <th>İşlem ID:</th>
+                                                <td><code>@callbackModel.TURKPOS_RETVAL_Islem_ID</code></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Sipariş ID:</th>
+                                                <td><code>@callbackModel.TURKPOS_RETVAL_Siparis_ID</code></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th>GUID:</th>
+                                                <td><small>@callbackModel.TURKPOS_RETVAL_GUID</small></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Tahsilat Tutarı:</th>
+                                                <td><strong>@callbackModel.TURKPOS_RETVAL_Tahsilat_Tutari</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Net Ödeme Tutarı:</th>
+                                                <td><strong>@callbackModel.TURKPOS_RETVAL_Odeme_Tutari</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Banka Sonuç Kod:</th>
+                                                <td>@callbackModel.TURKPOS_RETVAL_Banka_Sonuc_Kod</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Kart No:</th>
+                                                <td>@callbackModel.TURKPOS_RETVAL_KK_No</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Extra Data:</th>
+                                                <td><small>@callbackModel.TURKPOS_RETVAL_Ext_Data</small></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Ham Callback Parametreleri -->
+                @if (allParameters.Any())
+                {
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-code"></i> Ham Callback Parametreleri</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Parametre</th>
+                                            <th>Değer</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var param in allParameters.OrderBy(p => p.Key))
+                                        {
+                                            <tr>
+                                                <td><code>@param.Key</code></td>
+                                                <td>
+                                                    @if (param.Key.Contains("GUID") || param.Key.Contains("Ext_Data"))
+                                                    {
+                                                        <small class="text-muted">@param.Value</small>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@param.Value</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- İşlem Durumu Özeti -->
+                <div class="card mt-4 @(callbackModel?.TURKPOS_RETVAL_Sonuc == "1" ? "border-success" : "border-danger")">
+                    <div class="card-header bg-@(callbackModel?.TURKPOS_RETVAL_Sonuc == "1" ? "success" : "danger") text-white">
+                        <h6 class="mb-0">
+                            <i class="fas fa-@(callbackModel?.TURKPOS_RETVAL_Sonuc == "1" ? "check-circle" : "exclamation-triangle")"></i>
+                            İşlem Özeti
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        @if (callbackModel?.TURKPOS_RETVAL_Sonuc == "1")
+                        {
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <h5 class="text-success">@callbackModel.TURKPOS_RETVAL_Dekont_ID</h5>
+                                    <small class="text-muted">Dekont Numarası</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5 class="text-info">@callbackModel.TURKPOS_RETVAL_Tahsilat_Tutari</h5>
+                                    <small class="text-muted">Tahsilat Tutarı</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5 class="text-primary">@callbackModel.TURKPOS_RETVAL_Odeme_Tutari</h5>
+                                    <small class="text-muted">Net Tutar</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h5 class="text-secondary">@callbackModel.TURKPOS_RETVAL_KK_No</h5>
+                                    <small class="text-muted">Kart Numarası</small>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                <h5 class="text-danger">İşlem Tamamlanamadı</h5>
+                                <p class="text-muted">
+                                    @if (callbackModel != null)
+                                    {
+                                        <text>Hata: @callbackModel.TURKPOS_RETVAL_Sonuc_Str</text>
+                                    }
+                                    else
+                                    {
+                                        <text>Callback verileri alınamadı</text>
+                                    }
+                                </p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- İşlem Sonrası Aksiyonlar -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="@Url.Action("TP_Islem_Odeme_WD", "Test")" class="btn btn-secondary me-md-2">
+                        <i class="fas fa-redo"></i> Yeni Test
+                    </a>
+                    <a href="@Url.Action("Index", "Test")" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Test Ana Sayfası
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Başarılı işlem için confetti efekti
+            @if (callbackModel?.TURKPOS_RETVAL_Sonuc == "1")
+            {
+                <text>
+                // Başarı sesi çal (opsiyonel)
+                // playSuccessSound();
+                
+                // Başarı mesajı göster
+                console.log('TP_Islem_Odeme_WD 3D Secure başarılı: Dekont ID @callbackModel.TURKPOS_RETVAL_Dekont_ID');
+                </text>
+            }
+            else
+            {
+                <text>
+                console.log('TP_Islem_Odeme_WD 3D Secure başarısız');
+                </text>
+            }
+        });
+    </script>
+} 

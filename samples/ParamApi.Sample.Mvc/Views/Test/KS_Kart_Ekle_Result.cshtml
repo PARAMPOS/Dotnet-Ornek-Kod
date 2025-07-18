@@ -1,0 +1,191 @@
+@model ParamApi.Sample.Mvc.Models.KS_Kart_Ekle_ResultModel
+@{
+    ViewData["Title"] = "KS_Kart_Ekle Sonuç";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header @(Model.IsSuccess ? "bg-success" : "bg-danger") text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas @(Model.IsSuccess ? "fa-check-circle" : "fa-times-circle")"></i>
+                        KS_Kart_Ekle - @(Model.IsSuccess ? "Başarılı" : "Başarısız")
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (Model.IsSuccess)
+                    {
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-check-circle"></i> Tebrikler!</h5>
+                            <p class="mb-0">Kredi kartınız başarıyla saklandı. Artık bu kartı KS_Tahsilat ile ödeme almak için kullanabilirsiniz.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h6 class="mb-0"><i class="fas fa-save"></i> Saklama Bilgileri</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Sonuç:</strong></td>
+                                        <td><span class="badge bg-success">@Model.Sonuc</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Açıklama:</strong></td>
+                                        <td>@Model.Sonuc_Str</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>KS_GUID:</strong></td>
+                                        <td>
+                                            <code id="ksGuid">@Model.KS_GUID</code>
+                                            <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('ksGuid')" title="Kopyala">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </table>
+                                
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i>
+                                    <strong>Önemli:</strong> KS_GUID değerini not edin. Bu değeri KS_Tahsilat işleminde kullanacaksınız.
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="alert alert-danger">
+                            <h5><i class="fas fa-times-circle"></i> İşlem Başarısız</h5>
+                            <p class="mb-0">Kredi kartı saklama işlemi başarısız oldu.</p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header bg-danger text-white">
+                                <h6 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Hata Bilgileri</h6>
+                            </div>
+                            <div class="card-body">
+                                <table class="table table-sm">
+                                    <tr>
+                                        <td><strong>Sonuç:</strong></td>
+                                        <td><span class="badge bg-danger">@Model.Sonuc</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Açıklama:</strong></td>
+                                        <td>@Model.Sonuc_Str</td>
+                                    </tr>
+                                    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+                                    {
+                                        <tr>
+                                            <td><strong>Hata Mesajı:</strong></td>
+                                            <td class="text-danger">@Model.ErrorMessage</td>
+                                        </tr>
+                                    }
+                                </table>
+                            </div>
+                        </div>
+                    }
+
+                    @if (Model.RequestData != null)
+                    {
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6>
+                                    <i class="fas fa-info-circle"></i> Gönderilen Veriler
+                                    <button type="button" class="btn btn-sm btn-outline-secondary float-end" data-bs-toggle="collapse" data-bs-target="#requestData">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </h6>
+                            </div>
+                            <div class="collapse" id="requestData">
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td><strong>Kart Sahibi:</strong></td>
+                                            <td>@Model.RequestData.KK_Sahibi</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Kart Numarası:</strong></td>
+                                            <td><code>@Model.RequestData.KK_No</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Son Kullanma:</strong></td>
+                                            <td>@Model.RequestData.KK_SK_Ay/@Model.RequestData.KK_SK_Yil</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Kart Adı:</strong></td>
+                                            <td>@Model.RequestData.KK_Kart_Adi</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>İşlem ID:</strong></td>
+                                            <td><code>@Model.RequestData.KK_Islem_ID</code></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                        @if (Model.IsSuccess)
+                        {
+                            <a href="@Url.Action("KS_Tahsilat", "Test")" class="btn btn-success">
+                                <i class="fas fa-credit-card"></i> KS_Tahsilat Testi Yap
+                            </a>
+                        }
+                        <a href="@Url.Action("KS_Kart_Ekle", "Test")" class="btn btn-primary">
+                            <i class="fas fa-redo"></i> Yeni Test
+                        </a>
+                        <a href="@Url.Action("Index", "Test")" class="btn btn-secondary">
+                            <i class="fas fa-home"></i> Test Merkezine Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function copyToClipboard(elementId) {
+            var element = document.getElementById(elementId);
+            var text = element.textContent;
+            
+            navigator.clipboard.writeText(text).then(function() {
+                showToast('KS_GUID kopyalandı!', 'success');
+            }).catch(function(err) {
+                console.error('Kopyalama hatası:', err);
+                showToast('Kopyalama başarısız', 'danger');
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            var bgClass = type === 'success' ? 'bg-success' : type === 'danger' ? 'bg-danger' : 'bg-info';
+            var toast = `
+                <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            var toastContainer = $('#toast-container');
+            if (toastContainer.length === 0) {
+                $('body').append('<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>');
+                toastContainer = $('#toast-container');
+            }
+            
+            var toastElement = $(toast);
+            toastContainer.append(toastElement);
+            
+            var bsToast = new bootstrap.Toast(toastElement[0]);
+            bsToast.show();
+            
+            toastElement.on('hidden.bs.toast', function() {
+                $(this).remove();
+            });
+        }
+    </script>
+} 

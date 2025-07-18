@@ -1,0 +1,209 @@
+@model ParamApi.Sample.Mvc.Models.TP_WMD_UCD_ResultModel
+@{
+    ViewData["Title"] = "TP_WMD_UCD Test Sonucu";
+    var isSecure = TempData["IsSecure"] as bool? ?? false;
+    var threeDHtml = TempData["ThreeDHtml"] as string ?? "";
+    var orderId = TempData["OrderId"] as string ?? "";
+    var amount = TempData["Amount"] as string ?? "";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <!-- Sol sidebar - Test menüsü -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-credit-card"></i> Test Menüsü
+                </h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item bg-light">
+                        <strong><i class="fas fa-server"></i> TurkPos Servisleri</strong>
+                    </div>
+                    <a href="@Url.Action("TP_WMD_UCD", "Test")" class="list-group-item list-group-item-action active">
+                        <i class="fas fa-shield-alt"></i> TP_WMD_UCD
+                        <small class="text-muted d-block">3D Secure Ödeme</small>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    @if (Model.IsSuccess)
+                    {
+                        <i class="fas fa-check-circle text-success"></i>
+                    }
+                    else
+                    {
+                        <i class="fas fa-times-circle text-danger"></i>
+                    }
+                    TP_WMD_UCD Test Sonucu
+                </h4>
+            </div>
+            <div class="card-body">
+                @if (Model.IsSuccess)
+                {
+                    <div class="alert alert-success">
+                        <h5><i class="fas fa-check-circle"></i> İşlem Başarılı!</h5>
+                        <p class="mb-0">3D Secure ödeme işlemi başarıyla başlatıldı.</p>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-info-circle"></i> İşlem Bilgileri</h6>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-sm">
+                                        <tr>
+                                            <td><strong>Sonuç Kodu:</strong></td>
+                                            <td><span class="badge bg-success">@Model.Sonuc</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Sonuç Açıklaması:</strong></td>
+                                            <td>@Model.Sonuc_Str</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>İşlem ID:</strong></td>
+                                            <td><code>@Model.Islem_ID</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Dekont ID:</strong></td>
+                                            <td><code>@Model.Dekont_ID</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Sipariş ID:</strong></td>
+                                            <td><code>@Model.Siparis_ID</code></td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Test Zamanı:</strong></td>
+                                            <td>@Model.TestTime.ToString("dd.MM.yyyy HH:mm:ss")</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6><i class="fas fa-shield-alt"></i> 3D Secure Durumu</h6>
+                                </div>
+                                <div class="card-body">
+                                    @if (isSecure && !string.IsNullOrEmpty(threeDHtml))
+                                    {
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-shield-alt"></i> 3D Secure doğrulama gerekli.
+                                        </div>
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary btn-lg" onclick="start3DPayment()">
+                                                <i class="fas fa-credit-card"></i> Ödeme İşlemini Başlat
+                                            </button>
+                                            <button type="button" class="btn btn-outline-secondary" onclick="show3DContent()">
+                                                <i class="fas fa-code"></i> 3D HTML İçeriğini Göster
+                                            </button>
+                                        </div>
+                                    }
+                                    else if (!isSecure)
+                                    {
+                                        <div class="alert alert-success">
+                                            <i class="fas fa-check-circle"></i> NonSecure işlem tamamlandı.
+                                            <p class="mb-0 mt-2">3D Secure doğrulaması gerektirmeyen işlem başarıyla tamamlandı.</p>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> İşlem durumu belirleniyor...
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-danger">
+                        <h5><i class="fas fa-times-circle"></i> İşlem Başarısız!</h5>
+                        <p class="mb-0">@Model.ErrorMessage</p>
+                    </div>
+                }
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="@Url.Action("TP_WMD_UCD", "Test")" class="btn btn-primary me-md-2">
+                        <i class="fas fa-redo"></i> Yeni Test
+                    </a>
+                    <a href="@Url.Action("Index", "Test")" class="btn btn-secondary">
+                        <i class="fas fa-home"></i> Ana Sayfa
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // 3D ödeme işlemini başlat
+        function start3DPayment() {
+            try {
+                var threeDHtml = @Html.Raw(Json.Serialize(threeDHtml));
+                var orderData = {
+                    orderId: '@orderId',
+                    amount: '@amount TL',
+                    cancelUrl: '@Url.Action("TP_WMD_UCD", "Test")',
+                    retryFunction: function() {
+                        location.reload();
+                    }
+                };
+                
+                console.log('3D Payment başlatılıyor, HTML uzunluk:', threeDHtml ? threeDHtml.length : 0);
+                
+                if (threeDHtml && threeDHtml.trim() !== '' && threeDHtml !== 'NONSECURE') {
+                    // Global 3D modal fonksiyonunu çağır
+                    if (typeof start3DProcess === 'function') {
+                        start3DProcess(threeDHtml, orderData);
+                    } else {
+                        console.error('start3DProcess fonksiyonu bulunamadı!');
+                        alert('3D Secure modülü yüklenemedi. Sayfayı yenileyin.');
+                    }
+                } else {
+                    alert('3D Secure HTML içeriği bulunamadı!');
+                }
+            } catch (error) {
+                console.error('3D Payment Start Error:', error);
+                alert('3D Secure işlemi başlatılırken hata oluştu: ' + error.message);
+            }
+        }
+        
+        // 3D HTML içeriğini göster
+        function show3DContent() {
+            var threeDHtml = @Html.Raw(Json.Serialize(threeDHtml));
+            if (threeDHtml) {
+                var newWindow = window.open('', '_blank', 'width=800,height=600');
+                newWindow.document.write('<pre>' + threeDHtml.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</pre>');
+            }
+        }
+        
+        // Sayfa yüklendiğinde otomatik 3D başlatma
+        @if (isSecure && !string.IsNullOrEmpty(threeDHtml))
+        {
+            <text>
+            $(document).ready(function() {
+                console.log('3D Secure işlemi otomatik başlatılıyor...');
+                // 1 saniye sonra otomatik 3D başlat
+                setTimeout(function() {
+                    start3DPayment();
+                }, 1000);
+            });
+            </text>
+        }
+    </script>
+} 

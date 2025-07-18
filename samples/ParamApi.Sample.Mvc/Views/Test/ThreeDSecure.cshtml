@@ -1,0 +1,162 @@
+@model ParamApi.Sample.Mvc.Models.ThreeDSecureViewModel
+@{
+    ViewData["Title"] = "3D Secure Doğrulama";
+    Layout = null; // 3D sayfası için layout kullanma
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3D Secure Doğrulama</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .secure-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .secure-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 800px;
+            width: 100%;
+            overflow: hidden;
+        }
+        .secure-header {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .secure-content {
+            padding: 30px;
+        }
+        .secure-info {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        #threeDFrame {
+            width: 100%;
+            min-height: 500px;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+        }
+        .loading-spinner {
+            text-align: center;
+            padding: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="secure-container">
+        <div class="secure-card">
+            <div class="secure-header">
+                <h3><i class="fas fa-shield-alt"></i> 3D Secure Doğrulama</h3>
+                <p class="mb-0">Güvenli ödeme işlemi için 3D Secure doğrulaması yapılıyor</p>
+            </div>
+            
+            <div class="secure-content">
+                <div class="secure-info">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">Sipariş ID:</small>
+                            <div class="fw-bold">@Model.SiparisID</div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">İşlem Tutarı:</small>
+                            <div class="fw-bold">@Model.IslemTutar.ToString("C2")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>Bilgi:</strong> Aşağıda bankanızın 3D Secure doğrulama sayfası görüntülenmektedir. 
+                    Lütfen gerekli bilgileri girerek doğrulamayı tamamlayın.
+                </div>
+
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">3D Secure sayfası yükleniyor...</span>
+                    </div>
+                    <p class="mt-3 text-muted">3D Secure sayfası yükleniyor...</p>
+                </div>
+
+                <div id="threeDContainer" style="display: none;">
+                    <iframe id="threeDFrame" name="threeDFrame"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // 3D HTML içeriğini iframe'e yükle
+            var htmlContent = @Html.Raw(Json.Serialize(Model.GetDecodedHtml()));
+            
+            if (htmlContent && htmlContent.trim() !== '') {
+                // Loading'i gizle, iframe'i göster
+                setTimeout(function() {
+                    $('#loadingSpinner').hide();
+                    $('#threeDContainer').show();
+                    
+                    // HTML içeriğini iframe'e yaz
+                    var iframe = document.getElementById('threeDFrame');
+                    var iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(htmlContent);
+                    iframeDoc.close();
+                    
+                    // Iframe yüklendiğinde boyutunu ayarla
+                    iframe.onload = function() {
+                        try {
+                            var iframeHeight = iframe.contentWindow.document.body.scrollHeight;
+                            if (iframeHeight > 200) {
+                                iframe.style.height = iframeHeight + 'px';
+                            }
+                        } catch (e) {
+                            // Cross-origin iframe için varsayılan yükseklik
+                            iframe.style.height = '600px';
+                        }
+                    };
+                }, 1000);
+            } else {
+                // HTML içeriği yoksa hata göster
+                $('#loadingSpinner').html(`
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Hata:</strong> 3D Secure HTML içeriği alınamadı.
+                    </div>
+                    <a href="/Test/TP_WMD_UCD" class="btn btn-primary">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </a>
+                `);
+            }
+        });
+
+        // Sayfa kapanırken uyarı ver
+        window.addEventListener('beforeunload', function(e) {
+            if ($('#threeDContainer').is(':visible')) {
+                e.preventDefault();
+                e.returnValue = '3D Secure işlemi devam ediyor. Sayfayı kapatmak istediğinizden emin misiniz?';
+            }
+        });
+    </script>
+</body>
+</html> 

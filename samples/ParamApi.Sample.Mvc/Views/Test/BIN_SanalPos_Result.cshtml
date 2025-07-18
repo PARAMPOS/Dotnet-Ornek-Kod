@@ -1,0 +1,305 @@
+@model BIN_SanalPos_ResultModel
+@{
+    ViewData["Title"] = "BIN_SanalPos Sonuçları";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <!-- Sonuç Durumu -->
+            <div class="card mb-4">
+                <div class="card-header @(Model.IsSuccess ? "bg-success" : "bg-danger") text-white">
+                    <h4 class="mb-0">
+                        <i class="fas @(Model.IsSuccess ? "fa-check-circle" : "fa-times-circle") me-2"></i>
+                        BIN_SanalPos Sonuçları
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Sorgulanan BIN:</strong> @(string.IsNullOrEmpty(Model.Request?.BIN) ? "Tüm BIN'ler" : Model.Request.BIN)</p>
+                    <p><strong>İşlem Süresi:</strong> @Model.ProcessDuration ms</p>
+                    <a href="@Url.Action("BIN_SanalPos")" class="btn btn-primary">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        Yeni Sorgu
+                    </a>
+                </div>
+            </div>
+
+            <!-- API Response Bilgileri -->
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        API Yanıt Bilgileri
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Sonuç Kodu:</strong> 
+                                <span class="badge @(Model.Response?.Sonuc > 0 ? "bg-success" : "bg-danger")">
+                                    @Model.Response?.Sonuc
+                                </span>
+                            </p>
+                            <p><strong>Sonuç Açıklaması:</strong> @Model.Response?.Sonuc_Str</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Bulunan BIN Sayısı:</strong> @(Model.Response?.DT_Bilgi?.Count ?? 0)</p>
+                            <p><strong>Veri Durumu:</strong> 
+                                @if ((Model.Response?.DT_Bilgi?.Count ?? 0) > 0)
+                                {
+                                    <span class="badge bg-success">BIN Bilgileri Bulundu</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning">BIN Bilgisi Bulunamadı</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.Response?.DT_Bilgi?.Any() == true)
+            {
+                <!-- BIN Bilgileri -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-table me-2"></i>
+                            BIN Bilgileri (@Model.Response.DT_Bilgi.Count Kayıt)
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>BIN</th>
+                                        <th>Banka Adı</th>
+                                        <th>Banka Kodu</th>
+                                        <th>Kart Markası</th>
+                                        <th>Kart Tipi</th>
+                                        <th>SanalPOS ID</th>
+                                        <th>Durum</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var bin in Model.Response.DT_Bilgi)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <span class="badge bg-primary fs-6">@bin.BIN</span>
+                                            </td>
+                                            <td>
+                                                <i class="fas fa-university me-1"></i>
+                                                @bin.Kart_Banka
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary">@bin.Banka_Kodu</span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var brandClass = bin.Kart_Org?.ToLower() switch
+                                                    {
+                                                        "visa" => "text-primary",
+                                                        "mastercard" => "text-warning",
+                                                        "americanexpress" => "text-success",
+                                                        "troy" => "text-danger",
+                                                        _ => "text-dark"
+                                                    };
+                                                }
+                                                <span class="fw-bold @brandClass">@bin.Kart_Org</span>
+                                            </td>
+                                            <td>
+                                                @{
+                                                    var typeClass = bin.Kart_Tip?.ToLower() switch
+                                                    {
+                                                        "credit" => "bg-success",
+                                                        "debit" => "bg-info",
+                                                        "prepaid" => "bg-warning",
+                                                        _ => "bg-secondary"
+                                                    };
+                                                }
+                                                <span class="badge @typeClass">@bin.Kart_Tip</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-dark">@bin.SanalPOS_ID</span>
+                                            </td>
+                                            <td>
+                                                <span class="badge @(bin.DKK == "1" || bin.DKK?.ToLower() == "aktif" ? "bg-success" : "bg-danger")">
+                                                    @(bin.DKK == "1" || bin.DKK?.ToLower() == "aktif" ? "Aktif" : "Pasif")
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Özet İstatistikler -->
+                        <div class="card mt-4">
+                            <div class="card-header bg-light">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-chart-pie me-1"></i>
+                                    BIN İstatistikleri
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-primary mb-1">@Model.Response.DT_Bilgi.Count</h4>
+                                            <small class="text-muted">Toplam BIN</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-success mb-1">
+                                                @Model.Response.DT_Bilgi.GroupBy(x => x.Kart_Banka).Count()
+                                            </h4>
+                                            <small class="text-muted">Farklı Banka</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-warning mb-1">
+                                                @Model.Response.DT_Bilgi.GroupBy(x => x.Kart_Org).Count()
+                                            </h4>
+                                            <small class="text-muted">Kart Markası</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="border rounded p-3">
+                                            <h4 class="text-info mb-1">
+                                                @Model.Response.DT_Bilgi.Count(x => x.DKK == "1" || x.DKK?.ToLower() == "aktif")
+                                            </h4>
+                                            <small class="text-muted">Aktif BIN</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banka ve Kart Markası Dağılımı -->
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Banka Dağılımı</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        @foreach (var bankGroup in Model.Response.DT_Bilgi.GroupBy(x => x.Kart_Banka).OrderByDescending(x => x.Count()))
+                                        {
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="small">@bankGroup.Key</span>
+                                                <span class="badge bg-primary">@bankGroup.Count()</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h6 class="mb-0">Kart Markası Dağılımı</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        @foreach (var brandGroup in Model.Response.DT_Bilgi.GroupBy(x => x.Kart_Org).OrderByDescending(x => x.Count()))
+                                        {
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="small">@brandGroup.Key</span>
+                                                <span class="badge bg-success">@brandGroup.Count()</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (Model.IsSuccess)
+            {
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h5>BIN Bilgisi Bulunamadı</h5>
+                        <p class="text-muted">
+                            @if (string.IsNullOrEmpty(Model.Request?.BIN))
+                            {
+                                <span>Sistem BIN bilgisi bulunamadı.</span>
+                            }
+                            else
+                            {
+                                <span>@Model.Request.BIN BIN değeri için bilgi bulunamadı.</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+            }
+
+            @if (!Model.IsSuccess)
+            {
+                <!-- Hata Durumu -->
+                <div class="card">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Hata Detayları
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-danger">
+                            <h6>Hata Mesajı:</h6>
+                            <p class="mb-0">@Model.ErrorMessage</p>
+                        </div>
+                        
+                        <h6>Olası Nedenler:</h6>
+                        <ul>
+                            <li>BIN değeri geçersiz format (6 veya 8 haneli olmalı)</li>
+                            <li>API erişim sorunu</li>
+                            <li>Sunucu bağlantı hatası</li>
+                        </ul>
+                        
+                        <h6>Çözüm Önerileri:</h6>
+                        <ul>
+                            <li>BIN değerinin 6 veya 8 haneli olduğundan emin olun</li>
+                            <li>Sadece rakam kullanın</li>
+                            <li>BIN alanını boş bırakarak tüm BIN'leri listeleyin</li>
+                            <li>Birkaç dakika sonra tekrar deneyin</li>
+                        </ul>
+                    </div>
+                </div>
+            }
+
+            <!-- Teknik Detaylar -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-cog me-1"></i>
+                        Teknik Detaylar
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Metod:</strong> BIN_SanalPos</p>
+                            <p><strong>İşlem Süresi:</strong> @Model.ProcessDuration ms</p>
+                            <p><strong>İşlem Zamanı:</strong> @Model.ProcessTime.ToString("yyyy-MM-dd HH:mm:ss")</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Gönderilen Parametreler:</strong></p>
+                            <ul class="small">
+                                <li>BIN: @(string.IsNullOrEmpty(Model.Request?.BIN) ? "Boş (tüm BIN'ler)" : Model.Request.BIN)</li>
+                                <li>GUID: Otomatik eklendi</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> 

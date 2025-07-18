@@ -1,0 +1,202 @@
+@model TP_Islem_Iptal_Iade_Kismi2_TestModel
+@{
+    ViewData["Title"] = "TP_Islem_Iptal_Iade_Kismi2 - Kısmi İptal/İade İşlemi";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">🔄 TP_Islem_Iptal_Iade_Kismi2 - Kısmi İptal/İade İşlemi</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Açıklama -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> İşlem Açıklaması</h6>
+                        <p class="mb-2">Başarılı bir kredi kartı işleminin kısmen ya da tamamen iptal/iade edilmesi için kullanılır.</p>
+                        <ul class="mb-0 small">
+                            <li><strong>İPTAL:</strong> Ödeme işleminin gerçekleştiği gün yapılır, tüm tutar iptal edilir</li>
+                            <li><strong>İADE:</strong> Ödeme işlemi gün sonuna girdikten sonraki günlerde yapılır, kısmi iade mümkün</li>
+                            <li>İptal/iade işlemi için daha önce yapılmış başarılı bir ödeme işleminin Sipariş ID'si gereklidir</li>
+                        </ul>
+                    </div>
+
+                    <!-- Test Formu -->
+                    <form asp-action="TP_Islem_Iptal_Iade_Kismi2" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="row">
+                            <!-- İşlem Durumu -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Durum" class="form-label">
+                                        <i class="fas fa-toggle-on text-warning"></i> @Html.DisplayNameFor(m => m.Durum)
+                                    </label>
+                                    <select asp-for="Durum" class="form-select" id="durumSelect">
+                                        @foreach (var option in TP_Islem_Iptal_Iade_Kismi2_TestModel.DurumOptions)
+                                        {
+                                            <option value="@option.Value" selected="@(option.Value == Model.Durum.ToString())">@option.Text</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="Durum" class="text-danger"></span>
+                                    <div class="form-text">İptal aynı gün, iade ertesi günlerde yapılır</div>
+                                </div>
+                            </div>
+
+                            <!-- Tutar -->
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Tutar" class="form-label">
+                                        <i class="fas fa-lira-sign text-success"></i> @Html.DisplayNameFor(m => m.Tutar)
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₺</span>
+                                        <input asp-for="Tutar" class="form-control" placeholder="0.00" step="0.01" />
+                                    </div>
+                                    <span asp-validation-for="Tutar" class="text-danger"></span>
+                                    <div class="form-text">İptal için tam tutar, iade için kısmi tutar da olabilir</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sipariş ID -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Siparis_ID" class="form-label">
+                                <i class="fas fa-hashtag text-primary"></i> @Html.DisplayNameFor(m => m.Siparis_ID)
+                            </label>
+                            <div class="input-group">
+                                <input asp-for="Siparis_ID" class="form-control" placeholder="Daha önce yapılmış işlemin sipariş ID'si" maxlength="50" />
+                                <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                                    Örnek
+                                </button>
+                                <ul class="dropdown-menu">
+                                    @foreach (var sampleId in TP_Islem_Iptal_Iade_Kismi2_TestModel.SampleOrderIds)
+                                    {
+                                        <li><a class="dropdown-item sample-order-id" href="#" data-value="@sampleId">@sampleId</a></li>
+                                    }
+                                </ul>
+                            </div>
+                            <span asp-validation-for="Siparis_ID" class="text-danger"></span>
+                            <div class="form-text">İptal/iade edilecek işlemin sipariş ID'sini girin</div>
+                        </div>
+
+                        <!-- Açıklama -->
+                        <div class="form-group mb-3">
+                            <label asp-for="Aciklama" class="form-label">
+                                <i class="fas fa-comment text-muted"></i> @Html.DisplayNameFor(m => m.Aciklama)
+                            </label>
+                            <textarea asp-for="Aciklama" class="form-control" rows="2" placeholder="İsteğe bağlı işlem açıklaması"></textarea>
+                            <div class="form-text">Bu alan sadece test amaçlı bilgilendirme içindir</div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-warning btn-lg me-2" id="submitBtn">
+                                    <i class="fas fa-paper-plane"></i> İptal/İade İşlemini Başlat
+                                </button>
+                                <a href="/Test" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Geri Dön
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- İptal/İade Bilgilendirme -->
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0"><i class="fas fa-question-circle text-info"></i> İptal/İade İşlem Kuralları</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-warning">🚫 İPTAL İşlemi</h6>
+                            <ul class="small">
+                                <li>Ödeme işleminin gerçekleştiği gün yapılır</li>
+                                <li>Tüm tutar iptal edilir (kısmi iptal yok)</li>
+                                <li>Para müşterinin kartına hemen iade edilir</li>
+                                <li>Dekont kesilmez, işlem gerçekleşmemiş sayılır</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success">💰 İADE İşlemi</h6>
+                            <ul class="small">
+                                <li>Ödeme işlemi gün sonuna girdikten sonra yapılır</li>
+                                <li>Kısmi iade mümkün (tutar ≤ ödeme tutarı)</li>
+                                <li>Para 1-7 iş günü içinde müşteriye iade edilir</li>
+                                <li>Ayrı dekont kesilir, muhasebe kaydı yapılır</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Örnek sipariş ID'lerini input'a yükle
+            $('.sample-order-id').on('click', function(e) {
+                e.preventDefault();
+                var value = $(this).data('value');
+                $('#Siparis_ID').val(value);
+            });
+
+            // Durum değişimi kontrolü
+            $('#durumSelect').on('change', function() {
+                var durum = $(this).val();
+                var $tutarHelp = $('#Tutar').closest('.form-group').find('.form-text');
+                
+                if (durum === 'IPTAL') {
+                    $tutarHelp.text('İptal için tam tutar girilmelidir');
+                } else {
+                    $tutarHelp.text('İade için tam veya kısmi tutar girebilirsiniz');
+                }
+            });
+
+            // Form submit animasyon
+            $('form').on('submit', function() {
+                var $btn = $('#submitBtn');
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin"></i> İşlem yapılıyor...');
+            });
+
+            // Validation
+            $('form').validate({
+                rules: {
+                    Siparis_ID: {
+                        required: true,
+                        maxlength: 50
+                    },
+                    Tutar: {
+                        required: true,
+                        min: 0.01,
+                        max: 999999.99
+                    }
+                },
+                messages: {
+                    Siparis_ID: {
+                        required: "Sipariş ID zorunludur",
+                        maxlength: "Sipariş ID maksimum 50 karakter olmalıdır"
+                    },
+                    Tutar: {
+                        required: "Tutar zorunludur",
+                        min: "Tutar 0.01'den büyük olmalıdır",
+                        max: "Tutar çok büyük"
+                    }
+                }
+            });
+        });
+    </script>
+} 

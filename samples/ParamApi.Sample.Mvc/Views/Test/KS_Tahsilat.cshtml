@@ -1,0 +1,398 @@
+@model ParamApi.Sample.Mvc.Models.KS_Tahsilat_TestModel
+@{
+    ViewData["Title"] = "KS_Tahsilat Test";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-credit-card"></i>
+                        KS_Tahsilat - Saklı Kart ile Ödeme Testi
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Bilgi:</strong> Bu test ile daha önce KS_Kart_Ekle ile saklanan karttan ödeme alabilirsiniz. 
+                        3D Secure ve NonSecure işlemler desteklenir.
+                    </div>
+
+                    <form asp-action="KS_Tahsilat" method="post" id="tahsilatForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KS_GUID" class="form-label">
+                                        <i class="fas fa-key"></i> KS_GUID <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="KS_GUID" class="form-control" placeholder="Saklı kartın GUID değeri" />
+                                    <span asp-validation-for="KS_GUID" class="text-danger"></span>
+                                    <div class="form-text">KS_Kart_Ekle işleminden dönen GUID değeri</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="CVV" class="form-label">
+                                        <i class="fas fa-shield-alt"></i> CVV Kodu
+                                    </label>
+                                    <input asp-for="CVV" class="form-control" placeholder="123" maxlength="3" />
+                                    <span asp-validation-for="CVV" class="text-danger"></span>
+                                    <div class="form-text">3D işlemler için gerekli</div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="KK_Sahibi_GSM" class="form-label">
+                                        <i class="fas fa-mobile-alt"></i> Cep Telefonu <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="KK_Sahibi_GSM" class="form-control" placeholder="5555555555" maxlength="10" />
+                                    <span asp-validation-for="KK_Sahibi_GSM" class="text-danger"></span>
+                                    <div class="form-text">5 ile başlayıp 10 haneli olmalı</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Siparis_ID" class="form-label">
+                                        <i class="fas fa-hashtag"></i> Sipariş ID <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="Siparis_ID" class="form-control" placeholder="Otomatik oluşturulacak" />
+                                    <span asp-validation-for="Siparis_ID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Siparis_Aciklama" class="form-label">
+                                        <i class="fas fa-comment"></i> Sipariş Açıklama
+                                    </label>
+                                    <input asp-for="Siparis_Aciklama" class="form-control" placeholder="Test ödemesi" />
+                                    <span asp-validation-for="Siparis_Aciklama" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Taksit" class="form-label">
+                                        <i class="fas fa-list-ol"></i> Taksit Sayısı
+                                    </label>
+                                    <select asp-for="Taksit" class="form-select">
+                                        <option value="1" selected>1 - Tek Çekim</option>
+                                        <option value="2">2 Taksit</option>
+                                        <option value="3">3 Taksit</option>
+                                        <option value="6">6 Taksit</option>
+                                        <option value="9">9 Taksit</option>
+                                        <option value="12">12 Taksit</option>
+                                    </select>
+                                    <span asp-validation-for="Taksit" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Islem_Tutar" class="form-label">
+                                        <i class="fas fa-lira-sign"></i> İşlem Tutarı <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="Islem_Tutar" class="form-control" step="0.01" min="0.01" />
+                                    <span asp-validation-for="Islem_Tutar" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Toplam_Tutar" class="form-label">
+                                        <i class="fas fa-lira-sign"></i> Toplam Tutar <span class="text-danger">*</span>
+                                    </label>
+                                    <input asp-for="Toplam_Tutar" class="form-control" step="0.01" min="0.01" />
+                                    <span asp-validation-for="Toplam_Tutar" class="text-danger"></span>
+                                    <div class="form-text">Komisyon dahil tutar</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Islem_Guvenlik_Tip" class="form-label">
+                                        <i class="fas fa-shield-alt"></i> Güvenlik Tipi <span class="text-danger">*</span>
+                                    </label>
+                                    <select asp-for="Islem_Guvenlik_Tip" class="form-select">
+                                        <option value="3D" selected>3D Secure</option>
+                                        <option value="NS">NonSecure</option>
+                                    </select>
+                                    <span asp-validation-for="Islem_Guvenlik_Tip" class="text-danger"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label asp-for="Islem_ID" class="form-label">
+                                        <i class="fas fa-hashtag"></i> İşlem ID
+                                    </label>
+                                    <input asp-for="Islem_ID" class="form-control" placeholder="Otomatik oluşturulacak" />
+                                    <span asp-validation-for="Islem_ID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Extra Alanlar -->
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h6>
+                                    <i class="fas fa-plus-circle"></i> Extra Alanlar (Opsiyonel)
+                                    <button type="button" class="btn btn-sm btn-outline-secondary float-end" data-bs-toggle="collapse" data-bs-target="#extraFields">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </h6>
+                            </div>
+                            <div class="collapse" id="extraFields">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="Ref_URL" class="form-label">Referans URL</label>
+                                                <input asp-for="Ref_URL" class="form-control" placeholder="https://example.com" />
+                                                <span asp-validation-for="Ref_URL" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="KK_Islem_ID" class="form-label">Kart İşlem ID</label>
+                                                <input asp-for="KK_Islem_ID" class="form-control" />
+                                                <span asp-validation-for="KK_Islem_ID" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="Data1" class="form-label">Data1</label>
+                                                <input asp-for="Data1" class="form-control" />
+                                                <span asp-validation-for="Data1" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="Data2" class="form-label">Data2</label>
+                                                <input asp-for="Data2" class="form-control" />
+                                                <span asp-validation-for="Data2" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="Data3" class="form-label">Data3</label>
+                                                <input asp-for="Data3" class="form-control" />
+                                                <span asp-validation-for="Data3" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-3">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="Data4" class="form-label">Data4</label>
+                                                <input asp-for="Data4" class="form-control" />
+                                                <span asp-validation-for="Data4" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                            <button type="button" class="btn btn-secondary" onclick="fillTestData()">
+                                <i class="fas fa-magic"></i> Test Verisi Doldur
+                            </button>
+                            <button type="submit" class="btn btn-primary" id="submitBtn">
+                                <i class="fas fa-credit-card"></i> Ödeme İşlemini Başlat
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Önemli Notlar
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li><i class="fas fa-check text-success"></i> KS_GUID değeri zorunludur</li>
+                        <li><i class="fas fa-check text-success"></i> 3D Secure desteklenir</li>
+                        <li><i class="fas fa-check text-success"></i> NonSecure işlem mümkündür</li>
+                        <li><i class="fas fa-info-circle text-info"></i> Test ortamında gerçek para çekilmez</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-info text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-lightbulb"></i> Başarı Kriterleri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-0">
+                        <strong>Başarılı İşlem:</strong>
+                        <ul class="mb-0 mt-2">
+                            <li>Sonuc > 0</li>
+                            <li>UCD_URL = "NONSECURE"</li>
+                            <li>Islem_ID > 0</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="card-header bg-secondary text-white">
+                    <h6 class="card-title mb-0">
+                        <i class="fas fa-list"></i> Callback Parametreleri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">
+                        3D işlem sonrası dönen parametreler:
+                        <ul class="mt-2 mb-0">
+                            <li>TURKPOS_RETVAL_Sonuc</li>
+                            <li>TURKPOS_RETVAL_Dekont_ID</li>
+                            <li>TURKPOS_RETVAL_Tahsilat_Tutari</li>
+                            <li>TURKPOS_RETVAL_Odeme_Tutari</li>
+                            <li>TURKPOS_RETVAL_Siparis_ID</li>
+                            <li>TURKPOS_RETVAL_Islem_ID</li>
+                        </ul>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 3D Modal -->
+@await Html.PartialAsync("_ThreeDModal")
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Tutar alanları senkronize et
+            $('#Islem_Tutar').on('change', function() {
+                var islemTutar = parseFloat($(this).val()) || 0;
+                var toplamTutar = parseFloat($('#Toplam_Tutar').val()) || 0;
+                
+                if (toplamTutar < islemTutar) {
+                    $('#Toplam_Tutar').val(islemTutar.toFixed(2));
+                }
+            });
+
+            // Form submit event
+            $('#tahsilatForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                if (!$(this)[0].checkValidity()) {
+                    $(this)[0].reportValidity();
+                    return;
+                }
+                
+                var formData = $(this).serialize();
+                var submitBtn = $('#submitBtn');
+                
+                // Button'u disable et
+                submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> İşleniyor...');
+                
+                $.post($(this).attr('action'), formData)
+                    .done(function(response) {
+                        // Response HTML ise direkt yönlendir
+                        if (typeof response === 'string' && response.includes('<!DOCTYPE html>')) {
+                            document.open();
+                            document.write(response);
+                            document.close();
+                        } else {
+                            // JSON response ise işle
+                            if (response.is3DTransaction && response.decodedHtml) {
+                                // 3D Secure modal'ını aç
+                                show3DModal(response.decodedHtml, response.requestData.siparis_ID, response.requestData.islem_Tutar);
+                            } else {
+                                // Sonuç sayfasına yönlendir
+                                window.location.href = '/Test/KS_Tahsilat_Result';
+                            }
+                        }
+                    })
+                    .fail(function(xhr) {
+                        console.error('İşlem hatası:', xhr);
+                        showToast('İşlem sırasında hata oluştu', 'danger');
+                    })
+                    .always(function() {
+                        // Button'u tekrar aktif et
+                        submitBtn.prop('disabled', false).html('<i class="fas fa-credit-card"></i> Ödeme İşlemini Başlat');
+                    });
+            });
+        });
+
+        function fillTestData() {
+            // Test verisi doldur
+            $('#KS_GUID').val('');
+            $('#CVV').val('123');
+            $('#KK_Sahibi_GSM').val('5555555555');
+            $('#Siparis_ID').val('KS_TAHSILAT_' + new Date().getTime());
+            $('#Siparis_Aciklama').val('Saklı kart ile test ödemesi');
+            $('#Taksit').val('1');
+            $('#Islem_Tutar').val('100.00');
+            $('#Toplam_Tutar').val('100.00');
+            $('#Islem_Guvenlik_Tip').val('3D');
+            $('#Islem_ID').val('KS_ISLEM_' + new Date().getTime());
+            
+            showToast('Test verisi dolduruldu. KS_GUID değerini manuel girmeniz gerekiyor.', 'info');
+        }
+
+        function showToast(message, type = 'info') {
+            var bgClass = type === 'success' ? 'bg-success' : type === 'danger' ? 'bg-danger' : 'bg-info';
+            var toast = `
+                <div class="toast align-items-center text-white ${bgClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">${message}</div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+            
+            var toastContainer = $('#toast-container');
+            if (toastContainer.length === 0) {
+                $('body').append('<div id="toast-container" class="toast-container position-fixed bottom-0 end-0 p-3"></div>');
+                toastContainer = $('#toast-container');
+            }
+            
+            var toastElement = $(toast);
+            toastContainer.append(toastElement);
+            
+            var bsToast = new bootstrap.Toast(toastElement[0]);
+            bsToast.show();
+            
+            toastElement.on('hidden.bs.toast', function() {
+                $(this).remove();
+            });
+        }
+    </script>
+    
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+} 

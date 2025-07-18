@@ -1,0 +1,299 @@
+@model ParamApi.Sample.Mvc.Models.TP_Islem_Odeme_BKM_ResultModel
+@{
+    ViewData["Title"] = "TP_Islem_Odeme_BKM Test Sonucu";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-mobile-alt"></i> TP_Islem_Odeme_BKM Test Sonucu
+                </h4>
+                <p class="card-text mt-2 mb-0">
+                    <small class="text-muted">
+                        Test zamanı: @Model.TestTime.ToString("dd.MM.yyyy HH:mm:ss")
+                    </small>
+                </p>
+            </div>
+            
+            <div class="card-body">
+                @if (Model.IsSuccess)
+                {
+                    @if (Model.CanRedirectToBkm)
+                    {
+                        <!-- BKM Express Yönlendirme -->
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-mobile-alt"></i> BKM Express Hazır!
+                            </h5>
+                            <p class="mb-0">
+                                İşlem başlatıldı! BKM Express sayfasına yönlendirileceksiniz.
+                            </p>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
+                            <a href="@Model.Redirect_URL" target="_blank" class="btn btn-success btn-lg">
+                                <i class="fas fa-mobile-alt"></i> BKM Express Sayfasına Git
+                            </a>
+                            <button type="button" class="btn btn-info btn-lg" onclick="openBkmInFrame()">
+                                <i class="fas fa-window-maximize"></i> Iframe'de Aç
+                            </button>
+                        </div>
+
+                        <!-- BKM Express Akış Bilgisi -->
+                        <div class="alert alert-info">
+                            <h6><i class="fas fa-info-circle"></i> Sonraki Adımlar</h6>
+                            <ol class="mb-0">
+                                <li>BKM Express sayfasına gidin</li>
+                                <li>Telefon numaranızı doğrulayın</li>
+                                <li>Bankanızı seçin ve mobil uygulamanızı açın</li>
+                                <li>Ödemeyi onaylayın</li>
+                                <li>Sonuç otomatik olarak bildirilecek</li>
+                            </ol>
+                        </div>
+
+                        <!-- BKM Express iframe -->
+                        <div id="bkmFrame" style="display: none;">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h6>BKM Express - Test Ortamı</h6>
+                                </div>
+                                <div class="card-body p-0">
+                                    <iframe src="@Model.Redirect_URL" width="100%" height="600" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Başarılı ama redirect URL yok -->
+                        <div class="alert alert-warning" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle"></i> Beklenmeyen Durum
+                            </h5>
+                            <p class="mb-0">
+                                İşlem başarılı ama BKM Express URL'si alınamadı.
+                            </p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <!-- Hata -->
+                    <div class="alert alert-danger" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle"></i> İşlem Başarısız!
+                        </h5>
+                        <p class="mb-0">
+                            @(Model.ErrorMessage ?? Model.Response_Message ?? "Bilinmeyen hata")
+                        </p>
+                    </div>
+                }
+
+                <!-- API Response Detayları -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6><i class="fas fa-code"></i> API Response Detayları</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <th>Response Code:</th>
+                                            <td>
+                                                <span class="badge bg-@(Model.IsSuccess ? "success" : "danger")">
+                                                    @Model.Response_Code
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Response Message:</th>
+                                            <td>@Model.Response_Message</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Sipariş ID:</th>
+                                            <td><code>@Model.Order_ID</code></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Test Zamanı:</th>
+                                            <td>@Model.TestTime.ToString("HH:mm:ss")</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <th>İşlem Tipi:</th>
+                                            <td>
+                                                <span class="badge bg-info">BKM Express</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Redirect URL Var:</th>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(Model.Redirect_URL))
+                                                {
+                                                    <span class="badge bg-success">Evet</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Hayır</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>BKM Hazır:</th>
+                                            <td>
+                                                @if (Model.CanRedirectToBkm)
+                                                {
+                                                    <span class="badge bg-success">Evet</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Hayır</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>İşlem Durumu:</th>
+                                            <td>
+                                                @if (Model.IsSuccess)
+                                                {
+                                                    <span class="badge bg-success">Başarılı</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">Başarısız</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gönderilen Veriler -->
+                @if (Model.RequestData != null)
+                {
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-paper-plane"></i> Gönderilen Test Verileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Müşteri Bilgileri</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th>Müşteri:</th>
+                                                <td>@Model.RequestData.Customer_Info</td>
+                                            </tr>
+                                            <tr>
+                                                <th>GSM:</th>
+                                                <td>@Model.RequestData.Customer_GSM</td>
+                                            </tr>
+                                            <tr>
+                                                <th>IP Adresi:</th>
+                                                <td>@Model.RequestData.IPAddress</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Referans URL:</th>
+                                                <td>@Model.RequestData.Referrer_URL</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>Sipariş Bilgileri</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th>Tutar:</th>
+                                                <td><strong>@Model.RequestData.Amount.ToString("F2") ₺</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <th>Açıklama:</th>
+                                                <td>@Model.RequestData.Order_Description</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Transaction ID:</th>
+                                                <td>@Model.RequestData.Transaction_ID</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Sipariş ID:</th>
+                                                <td><code>@Model.RequestData.Order_ID</code></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Debug Bilgileri -->
+                @if (!string.IsNullOrEmpty(Model.Redirect_URL))
+                {
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-bug"></i> BKM Express URL Detayları</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Redirect URL (Ham Veri):</label>
+                                <textarea class="form-control" rows="3" readonly>@Model.Redirect_URL</textarea>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- İşlem Yönlendirme Butonları -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="@Url.Action("TP_Islem_Odeme_BKM", "Test")" class="btn btn-secondary me-md-2">
+                        <i class="fas fa-redo"></i> Yeniden Test Et
+                    </a>
+                    <a href="@Url.Action("Index", "Test")" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Test Ana Sayfası
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openBkmInFrame() {
+            $('#bkmFrame').toggle();
+            if ($('#bkmFrame').is(':visible')) {
+                $('html, body').animate({
+                    scrollTop: $('#bkmFrame').offset().top
+                }, 500);
+            }
+        }
+
+        $(document).ready(function() {
+            // BKM Express bilgilendirme
+            @if (Model.CanRedirectToBkm)
+            {
+                <text>
+                console.log('BKM Express URL hazır: @Model.Redirect_URL?.Substring(0, Math.Min(50, Model.Redirect_URL?.Length ?? 0))...');
+                </text>
+            }
+            else
+            {
+                <text>
+                console.log('BKM Express işlemi başarısız veya URL alınamadı');
+                </text>
+            }
+        });
+    </script>
+} 

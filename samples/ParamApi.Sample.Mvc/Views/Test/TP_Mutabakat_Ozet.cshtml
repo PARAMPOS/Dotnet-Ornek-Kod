@@ -1,0 +1,198 @@
+@model TP_Mutabakat_Ozet_TestModel
+@{
+    ViewData["Title"] = "TP_Mutabakat_Ozet - Mutabakat Özet Sorgulama";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        TP_Mutabakat_Ozet - Mutabakat Özet Sorgulama
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-1"></i> Servis Bilgileri</h6>
+                        <ul class="mb-0">
+                            <li><strong>Amaç:</strong> Belirli tarih aralığındaki işlem özetlerini görüntüleme</li>
+                            <li><strong>Metod:</strong> TP_Mutabakat_Ozet</li>
+                            <li><strong>Parametreler:</strong> GUID (otomatik), Başlangıç Tarihi, Bitiş Tarihi</li>
+                            <li><strong>Dönüş:</strong> Özet mutabakat bilgileri (toplam tutarlar, işlem sayıları)</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="TP_Mutabakat_Ozet" method="post" id="mutabakatOzetForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Tarih_Bas" class="form-label">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Tarih_Bas)
+                                    </label>
+                                    <input asp-for="Tarih_Bas" class="form-control" type="text" 
+                                           placeholder="dd.MM.yyyy HH:mm:ss" 
+                                           title="Örnek: 20.11.2023 00:00:00" />
+                                    <span asp-validation-for="Tarih_Bas" class="text-danger"></span>
+                                    <div class="form-text">Mutabakat sorgulamasının başlangıç tarihi</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label asp-for="Tarih_Bit" class="form-label">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Tarih_Bit)
+                                    </label>
+                                    <input asp-for="Tarih_Bit" class="form-control" type="text" 
+                                           placeholder="dd.MM.yyyy HH:mm:ss" 
+                                           title="Örnek: 20.11.2023 23:59:59" />
+                                    <span asp-validation-for="Tarih_Bit" class="text-danger"></span>
+                                    <div class="form-text">Mutabakat sorgulamasının bitiş tarihi</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hızlı Tarih Seçimi -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Hızlı Tarih Seçimi
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    @foreach (var range in TP_Mutabakat_Ozet_TestModel.SampleDateRanges)
+                                    {
+                                        <div class="col-md-4 col-lg-2">
+                                            <button type="button" class="btn btn-outline-primary btn-sm w-100 date-range-btn"
+                                                    data-start="@range.TarihBas" data-end="@range.TarihBit">
+                                                @range.Name
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                    <i class="fas fa-search me-2"></i>
+                                    Mutabakat Özet Sorgula
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="resetForm()">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Kullanım Bilgileri -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <i class="fas fa-question-circle me-1"></i>
+                        Kullanım Bilgileri
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>📋 Parametreler</h6>
+                            <ul class="list-unstyled">
+                                <li><strong>Tarih_Bas:</strong> Sorgu başlangıç tarihi</li>
+                                <li><strong>Tarih_Bit:</strong> Sorgu bitiş tarihi</li>
+                                <li><strong>GUID:</strong> Otomatik eklenir</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>📊 Dönüş Bilgileri</h6>
+                            <ul class="list-unstyled">
+                                <li>• Toplam işlem tutarları</li>
+                                <li>• İşlem sayıları</li>
+                                <li>• Komisyon bilgileri</li>
+                                <li>• Tarih bazlı detaylar</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Hızlı tarih seçimi
+            $('.date-range-btn').click(function() {
+                const startDate = $(this).data('start');
+                const endDate = $(this).data('end');
+                
+                $('#Tarih_Bas').val(startDate);
+                $('#Tarih_Bit').val(endDate);
+                
+                // Aktif buton stilini güncelle
+                $('.date-range-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+                $(this).removeClass('btn-outline-primary').addClass('btn-primary');
+            });
+
+            // Form validasyonu
+            $('#mutabakatOzetForm').on('submit', function(e) {
+                const tarihBas = $('#Tarih_Bas').val().trim();
+                const tarihBit = $('#Tarih_Bit').val().trim();
+                
+                if (!tarihBas || !tarihBit) {
+                    e.preventDefault();
+                    alert('Lütfen başlangıç ve bitiş tarihlerini giriniz.');
+                    return false;
+                }
+                
+                // Tarih format kontrolü
+                const dateRegex = /^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}:\d{2}$/;
+                if (!dateRegex.test(tarihBas) || !dateRegex.test(tarihBit)) {
+                    e.preventDefault();
+                    alert('Tarih formatı: dd.MM.yyyy HH:mm:ss olmalıdır.\nÖrnek: 20.11.2023 00:00:00');
+                    return false;
+                }
+                
+                // Submit butonunu deaktive et
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Sorgulanıyor...');
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('mutabakatOzetForm').reset();
+            $('.date-range-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+            
+            // Default değerleri geri yükle
+            const now = new Date();
+            const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            
+            $('#Tarih_Bas').val(formatDate(lastWeek));
+            $('#Tarih_Bit').val(formatDate(now));
+        }
+
+        function formatDate(date) {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            
+            return `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+        }
+    </script>
+} 

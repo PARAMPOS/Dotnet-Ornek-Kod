@@ -1,0 +1,160 @@
+@model TP_Islem_Sorgulama4_TestModel
+@{
+    ViewData["Title"] = "TP_Islem_Sorgulama4 - İşlem Durumu Sorgulama";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <partial name="_TestSidebar" />
+        </div>
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0">
+                        <i class="fas fa-search me-2"></i>
+                        TP_Islem_Sorgulama4 - İşlem Durumu Sorgulama
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle me-1"></i> Servis Bilgileri</h6>
+                        <ul class="mb-0">
+                            <li><strong>Amaç:</strong> İşlemin durumunu sorgulama (başarılı/başarısız/iptal/iade)</li>
+                            <li><strong>Metod:</strong> TP_Islem_Sorgulama4</li>
+                            <li><strong>Parametreler:</strong> Dekont ID, Sipariş ID veya İşlem ID (en az biri)</li>
+                            <li><strong>Dönüş:</strong> İşlem durum bilgileri</li>
+                        </ul>
+                    </div>
+
+                    <form asp-action="TP_Islem_Sorgulama4" method="post" id="sorgulamaForm">
+                        @Html.AntiForgeryToken()
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Dekont_ID" class="form-label">
+                                        <i class="fas fa-receipt me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Dekont_ID)
+                                    </label>
+                                    <input asp-for="Dekont_ID" class="form-control" placeholder="123456789" />
+                                    <span asp-validation-for="Dekont_ID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Siparis_ID" class="form-label">
+                                        <i class="fas fa-shopping-cart me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Siparis_ID)
+                                    </label>
+                                    <input asp-for="Siparis_ID" class="form-control" placeholder="ORDER-123456789" />
+                                    <span asp-validation-for="Siparis_ID" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label asp-for="Islem_ID" class="form-label">
+                                        <i class="fas fa-hashtag me-1"></i>
+                                        @Html.DisplayNameFor(m => m.Islem_ID)
+                                    </label>
+                                    <input asp-for="Islem_ID" class="form-control" placeholder="TXN-123456789" />
+                                    <span asp-validation-for="Islem_ID" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-1"></i>
+                            <strong>Not:</strong> En az bir parametre girilmelidir (Dekont ID, Sipariş ID veya İşlem ID).
+                        </div>
+
+                        <!-- Örnek Değerler -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0">
+                                    <i class="fas fa-clipboard-list me-1"></i>
+                                    Örnek Değerler
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2">
+                                    @foreach (var sample in TP_Islem_Sorgulama4_TestModel.SampleValues)
+                                    {
+                                        <div class="col-md-6 col-lg-4">
+                                            <button type="button" class="btn btn-outline-secondary btn-sm w-100 sample-btn"
+                                                    data-type="@sample.Type" data-value="@sample.Value">
+                                                <small>@sample.Type: @sample.Value</small>
+                                            </button>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-success btn-lg" id="submitBtn">
+                                    <i class="fas fa-search me-2"></i>
+                                    İşlem Durumunu Sorgula
+                                </button>
+                                <button type="button" class="btn btn-secondary btn-lg ms-2" onclick="resetForm()">
+                                    <i class="fas fa-undo me-2"></i>
+                                    Temizle
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Örnek değer seçimi
+            $('.sample-btn').click(function() {
+                const type = $(this).data('type');
+                const value = $(this).data('value');
+                
+                // Tüm alanları temizle
+                $('#Dekont_ID, #Siparis_ID, #Islem_ID').val('');
+                
+                // İlgili alana değeri yerleştir
+                if (type === 'Dekont ID') {
+                    $('#Dekont_ID').val(value);
+                } else if (type === 'Sipariş ID') {
+                    $('#Siparis_ID').val(value);
+                } else if (type === 'İşlem ID') {
+                    $('#Islem_ID').val(value);
+                }
+                
+                // Aktif buton stilini güncelle
+                $('.sample-btn').removeClass('btn-secondary').addClass('btn-outline-secondary');
+                $(this).removeClass('btn-outline-secondary').addClass('btn-secondary');
+            });
+
+            // Form validasyonu
+            $('#sorgulamaForm').on('submit', function(e) {
+                const decontId = $('#Dekont_ID').val().trim();
+                const siparisId = $('#Siparis_ID').val().trim();
+                const islemId = $('#Islem_ID').val().trim();
+                
+                if (!decontId && !siparisId && !islemId) {
+                    e.preventDefault();
+                    alert('En az bir parametre girilmelidir: Dekont ID, Sipariş ID veya İşlem ID');
+                    return false;
+                }
+                
+                // Submit butonunu deaktive et
+                $('#submitBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-2"></i>Sorgulanıyor...');
+            });
+        });
+
+        function resetForm() {
+            document.getElementById('sorgulamaForm').reset();
+            $('.sample-btn').removeClass('btn-secondary').addClass('btn-outline-secondary');
+        }
+    </script>
+} 

@@ -1,0 +1,279 @@
+@model ParamApi.Sample.Mvc.Models.TP_Islem_Odeme_WD_ResultModel
+@{
+    ViewData["Title"] = "TP_Islem_Odeme_WD Test Sonucu";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <partial name="_TestSidebar" />
+    </div>
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-globe"></i> TP_Islem_Odeme_WD Test Sonucu
+                </h4>
+                <p class="card-text mt-2 mb-0">
+                    <small class="text-muted">
+                        Test zamanı: @Model.TestTime.ToString("dd.MM.yyyy HH:mm:ss")
+                    </small>
+                </p>
+            </div>
+            
+            <div class="card-body">
+                @if (Model.IsSuccess)
+                {
+                    @if (Model.Is3DTransaction)
+                    {
+                        <!-- 3D Secure İşlemi -->
+                        <div class="alert alert-info" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-shield-alt"></i> 3D Secure Doğrulama Gerekiyor
+                            </h5>
+                            <p class="mb-0">
+                                İşlem başlatıldı! 3D Secure doğrulama için yönlendirileceksiniz.
+                            </p>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-4">
+                            <button type="button" class="btn btn-primary btn-lg" onclick="open3DSecure()">
+                                <i class="fas fa-shield-alt"></i> 3D Secure Doğrulama Başlat
+                            </button>
+                        </div>
+                    }
+                    else if (Model.IsNonSecure)
+                    {
+                        <!-- NonSecure İşlem Başarılı -->
+                        <div class="alert alert-success" role="alert">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-check-circle"></i> NonSecure Ödeme Başarılı!
+                            </h5>
+                            <p class="mb-0">
+                                Dövizli ödeme işlemi başarıyla tamamlandı.
+                            </p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <!-- Hata -->
+                    <div class="alert alert-danger" role="alert">
+                        <h5 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle"></i> İşlem Başarısız!
+                        </h5>
+                        <p class="mb-0">
+                            @(Model.ErrorMessage ?? Model.Sonuc_Str ?? "Bilinmeyen hata")
+                        </p>
+                    </div>
+                }
+
+                <!-- API Response Detayları -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h6><i class="fas fa-code"></i> API Response Detayları</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <th>Sonuç:</th>
+                                            <td>
+                                                <span class="badge bg-@(Model.IsSuccess ? "success" : "danger")">
+                                                    @Model.Sonuc
+                                                </span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Sonuç Açıklama:</th>
+                                            <td>@Model.Sonuc_Str</td>
+                                        </tr>
+                                        <tr>
+                                            <th>İşlem ID:</th>
+                                            <td><code>@Model.Islem_ID</code></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Sipariş ID:</th>
+                                            <td><code>@Model.Siparis_ID</code></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <table class="table table-sm">
+                                    <tbody>
+                                        <tr>
+                                            <th>Banka Sonuç Kod:</th>
+                                            <td>@Model.Banka_Sonuc_Kod</td>
+                                        </tr>
+                                        <tr>
+                                            <th>İşlem Tipi:</th>
+                                            <td>
+                                                @if (Model.Is3DTransaction)
+                                                {
+                                                    <span class="badge bg-info">3D Secure</span>
+                                                }
+                                                else if (Model.IsNonSecure)
+                                                {
+                                                    <span class="badge bg-secondary">NonSecure</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-warning">Hata</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>3D URL Var:</th>
+                                            <td>
+                                                @if (!string.IsNullOrEmpty(Model.UCD_URL))
+                                                {
+                                                    <span class="badge bg-success">Evet</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-secondary">Hayır</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Test Zamanı:</th>
+                                            <td>@Model.TestTime.ToString("HH:mm:ss")</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gönderilen Veriler -->
+                @if (Model.RequestData != null)
+                {
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-paper-plane"></i> Gönderilen Test Verileri</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6>Kart Bilgileri</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th>Döviz:</th>
+                                                <td>@Model.RequestData.Doviz_Kodu</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Kart Sahibi:</th>
+                                                <td>@Model.RequestData.KK_Sahibi</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Kart No:</th>
+                                                <td>@Model.RequestData.KK_No</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Son Kullanma:</th>
+                                                <td>@Model.RequestData.KK_SK_Ay.ToString("D2")/@Model.RequestData.KK_SK_Yil</td>
+                                            </tr>
+                                            <tr>
+                                                <th>GSM:</th>
+                                                <td>@Model.RequestData.KK_Sahibi_GSM</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6>İşlem Bilgileri</h6>
+                                    <table class="table table-sm">
+                                        <tbody>
+                                            <tr>
+                                                <th>İşlem Tutar:</th>
+                                                <td>@Model.RequestData.Islem_Tutar.ToString("F2") @Model.RequestData.Doviz_Kodu</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Toplam Tutar:</th>
+                                                <td>@Model.RequestData.Toplam_Tutar.ToString("F2") @Model.RequestData.Doviz_Kodu</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Güvenlik:</th>
+                                                <td>@Model.RequestData.Islem_Guvenlik_Tip</td>
+                                            </tr>
+                                            <tr>
+                                                <th>IP Adresi:</th>
+                                                <td>@Model.RequestData.IPAdr</td>
+                                            </tr>
+                                            <tr>
+                                                <th>Sipariş Açıklama:</th>
+                                                <td>@Model.RequestData.Siparis_Aciklama</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <!-- Debug Bilgileri -->
+                @if (!string.IsNullOrEmpty(Model.UCD_URL))
+                {
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h6><i class="fas fa-bug"></i> 3D Secure URL Detayları</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">UCD_URL (Ham Veri):</label>
+                                <textarea class="form-control" rows="3" readonly>@Model.UCD_URL</textarea>
+                            </div>
+                            
+                            @if (!string.IsNullOrEmpty(Model.DecodedHtml))
+                            {
+                                <div class="mb-3">
+                                    <label class="form-label">Decode Edilmiş HTML:</label>
+                                    <textarea class="form-control" rows="5" readonly>@Model.DecodedHtml</textarea>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- İşlem Yönlendirme Butonları -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="@Url.Action("TP_Islem_Odeme_WD", "Test")" class="btn btn-secondary me-md-2">
+                        <i class="fas fa-redo"></i> Yeniden Test Et
+                    </a>
+                    <a href="@Url.Action("Index", "Test")" class="btn btn-primary">
+                        <i class="fas fa-home"></i> Test Ana Sayfası
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @if (Model.IsSuccess && Model.Is3DTransaction)
+    {
+        <script>
+            // UCD_URL'yi direkt yeni sekmede aç
+            function open3DSecure() {
+                var ucdUrl = '@Model.UCD_URL';
+                
+                if (ucdUrl && ucdUrl !== 'NONSECURE' && ucdUrl.trim() !== '') {
+                    // HTML entity'lerini decode et (&amp; -> &)
+                    ucdUrl = ucdUrl.replace(/&amp;/g, '&');
+                    
+                    // UCD_URL'yi direkt aç
+                    window.open(ucdUrl, '_blank');
+                } else {
+                    alert('3D Secure URL bulunamadı veya NonSecure işlem!');
+                }
+            }
+        </script>
+    }
+} 
